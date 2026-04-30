@@ -57,14 +57,25 @@ const BackgroundAnimation = () => {
       }
     };
 
+    let lastWidth = window.innerWidth;
+
     const handleResize = () => {
-      canvas.width = window.innerWidth;
+      const currentWidth = window.innerWidth;
+      canvas.width = currentWidth;
       canvas.height = window.innerHeight;
-      init();
+      
+      // Only re-initialize particles if the width changes (prevents resets on mobile scroll)
+      if (currentWidth !== lastWidth) {
+        init();
+        lastWidth = currentWidth;
+      }
     };
 
     window.addEventListener('resize', handleResize);
-    handleResize();
+    // Initial setup
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    init();
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
