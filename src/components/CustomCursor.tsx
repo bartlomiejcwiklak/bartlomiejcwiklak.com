@@ -9,7 +9,7 @@ const CustomCursor = () => {
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
 
-  const springConfig = { damping: 25, stiffness: 150 };
+  const springConfig = { damping: 30, stiffness: 200 };
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
 
@@ -60,9 +60,9 @@ const CustomCursor = () => {
   if (isTouchDevice) return null;
 
   return (
-    <div style={{ opacity: isVisible ? 1 : 0, transition: 'opacity 0.3s' }}>
+    <div className="pointer-events-none fixed inset-0 z-[9999]" style={{ opacity: isVisible ? 1 : 0, transition: 'opacity 0.5s ease' }}>
       <motion.div
-        className="fixed top-0 left-0 w-8 h-8 bg-white rounded-full mix-blend-difference pointer-events-none z-[9999]"
+        className="fixed top-0 left-0 w-12 h-12 border border-brand-accent/50 rounded-full"
         style={{
           x: cursorXSpring,
           y: cursorYSpring,
@@ -70,16 +70,21 @@ const CustomCursor = () => {
           translateY: '-50%',
         }}
         animate={{
-          scale: isHovered ? 2.5 : 1,
+          scale: isHovered ? 1.5 : 1,
+          backgroundColor: isHovered ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0)',
+          borderColor: isHovered ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.3)',
         }}
       />
       <motion.div
-        className="fixed top-0 left-0 w-2 h-2 bg-white rounded-full pointer-events-none z-[9999]"
+        className="fixed top-0 left-0 w-1.5 h-1.5 bg-white rounded-full"
         style={{
           x: cursorX,
           y: cursorY,
           translateX: '-50%',
           translateY: '-50%',
+        }}
+        animate={{
+          scale: isHovered ? 0 : 1,
         }}
       />
     </div>
@@ -87,3 +92,4 @@ const CustomCursor = () => {
 };
 
 export default CustomCursor;
+
