@@ -38,7 +38,7 @@ const Hero = () => {
   return (
     <section className="relative min-h-screen md:min-h-[120vh] flex flex-col justify-center px-4 md:px-12 overflow-hidden py-20">
       <HeroBackground />
-      
+
       <div className="relative z-10 w-full">
         <motion.div
           variants={container}
@@ -47,15 +47,15 @@ const Hero = () => {
           className="flex flex-col gap-2 md:gap-0"
         >
           <motion.div variants={child} className="flex flex-wrap overflow-hidden">
-            <GlitchText 
-              text={name1} 
-              className="text-[14vw] sm:text-[12vw] md:text-[15vw] leading-[0.8] font-serif tracking-tighter" 
+            <GlitchText
+              text={name1}
+              className="text-[14vw] sm:text-[12vw] md:text-[15vw] leading-[0.8] font-serif tracking-tighter"
             />
           </motion.div>
           <motion.div variants={child} className="flex flex-wrap overflow-hidden ml-0 md:ml-[10vw]">
-            <GlitchText 
-              text={name2} 
-              className="text-[14vw] sm:text-[12vw] md:text-[15vw] leading-[0.8] font-serif tracking-tighter text-outline" 
+            <GlitchText
+              text={name2}
+              className="text-[14vw] sm:text-[12vw] md:text-[15vw] leading-[0.8] font-serif tracking-tighter text-outline"
             />
           </motion.div>
         </motion.div>
@@ -67,7 +67,7 @@ const Hero = () => {
           className="mt-12 md:mt-16 max-w-xl"
         >
           <p className="font-mono text-[10px] md:text-sm uppercase tracking-[0.3em] md:tracking-[0.4em] text-zinc-500 mb-4 md:mb-6">
-            // DIGITAL DESIGNER & DEVELOPER
+            // GRAPHIC DESIGNER & WEB DEVELOPER
           </p>
           <p className="text-lg md:text-2xl text-zinc-300 leading-relaxed font-light">
             Pushing the boundaries of the digital landscape through experimental design and precision engineering.
