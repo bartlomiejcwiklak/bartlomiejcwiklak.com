@@ -8,10 +8,10 @@ const Privacy = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="min-h-[100dvh] w-full bg-transparent text-white px-8 py-20 md:px-12 md:py-32 font-sans overflow-y-auto no-scrollbar"
+      className="min-h-[100dvh] w-full bg-transparent text-white px-6 py-20 md:px-12 md:py-32 font-sans overflow-y-auto no-scrollbar"
     >
       {/* Navigation */}
-      <div className="fixed bottom-8 left-8 md:bottom-12 md:left-12 z-50">
+      <div className="fixed bottom-6 left-6 md:bottom-12 md:left-12 z-50 pb-[env(safe-area-inset-bottom)]">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -25,7 +25,7 @@ const Privacy = () => {
         </motion.div>
       </div>
 
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-3xl md:mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
