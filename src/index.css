@@ -11,27 +11,25 @@
 }
 
 @layer base {
+  * {
+    cursor: none !important;
+  }
+
   html {
     scroll-behavior: initial;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    cursor: none;
+    -moz-osx-content-smoothing: grayscale;
   }
 
   body {
     @apply bg-[#000000] text-white selection:bg-brand-accent selection:text-white;
     font-family: var(--font-sans);
     overflow-x: hidden;
-    cursor: none;
   }
 
   h1, h2, h3 {
     font-family: var(--font-mono);
     @apply tracking-tighter uppercase;
-  }
-  
-  a, button {
-    cursor: none;
   }
 }
 

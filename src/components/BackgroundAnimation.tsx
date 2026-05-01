@@ -97,7 +97,7 @@ const BackgroundAnimation = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 z-0 bg-black"
+      className="fixed inset-0 z-0 bg-black"
       style={{ filter: 'blur(0.5px)' }}
     />
   );
