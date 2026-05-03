@@ -4,6 +4,7 @@ import Landing from './components/Landing';
 import Portfolio from './components/Portfolio';
 import About from './components/About';
 import Privacy from './components/Privacy';
+import NotFound from './components/NotFound';
 import CustomCursor from './components/CustomCursor';
 import BackgroundAnimation from './components/BackgroundAnimation';
 
@@ -28,8 +29,6 @@ function App() {
         <div className="flex flex-col gap-1 font-mono text-[10px] md:text-xs text-zinc-500 uppercase tracking-widest">
           <p>Based in Łódź, Poland</p>
           <div className="flex gap-2 justify-end">
-            <Link to="/about" className="hover:text-white transition-colors duration-300">About</Link>
-            <span className="text-zinc-800">/</span>
             <Link to="/privacy" className="hover:text-white transition-colors duration-300">Privacy Policy</Link>
             <span className="text-zinc-800">/</span>
             <p className="text-zinc-700">© 2026</p>
@@ -44,6 +43,7 @@ function App() {
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/about" element={<About />} />
             <Route path="/privacy" element={<Privacy />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </AnimatePresence>
       </main>
