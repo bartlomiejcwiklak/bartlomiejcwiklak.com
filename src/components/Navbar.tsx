@@ -52,20 +52,8 @@ const Navbar = () => {
   const isTopNav = (isProjectPage && !isAtBottom) || isAboutPage;
 
   useLayoutEffect(() => {
-    const updateNavPosition = () => {
-      const latest = window.scrollY;
-      const atBottom = window.innerHeight + latest >= document.documentElement.scrollHeight - 50;
-
-      setIsAtBottom(atBottom);
-
-      if (isProjectPage && latest > 50 && !atBottom) {
-        setIsHidden(true);
-      } else {
-        setIsHidden(false);
-      }
-    };
-
-    updateNavPosition();
+    setIsAtBottom(false);
+    setIsHidden(false);
   }, [isProjectPage, location.pathname]);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
