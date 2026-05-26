@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -50,6 +50,23 @@ const Navbar = () => {
   const { scrollY } = useScroll();
 
   const isTopNav = (isProjectPage && !isAtBottom) || isAboutPage;
+
+  useEffect(() => {
+    const updateNavPosition = () => {
+      const latest = window.scrollY;
+      const atBottom = window.innerHeight + latest >= document.documentElement.scrollHeight - 50;
+
+      setIsAtBottom(atBottom);
+
+      if (isProjectPage && latest > 50 && !atBottom) {
+        setIsHidden(true);
+      } else {
+        setIsHidden(false);
+      }
+    };
+
+    updateNavPosition();
+  }, [isProjectPage, location.pathname]);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const atBottom = window.innerHeight + latest >= document.documentElement.scrollHeight - 50;
