@@ -19,7 +19,7 @@ const Logo = () => (
 const EMAIL = "contact@bartlomiejcwiklak.com";
 const STUDIO_TEXT = "-";
 
-const customTransition = { ease: [0.76, 0, 0.24, 1], duration: 0.8 };
+const customTransition = { ease: [0.76, 0, 0.24, 1] as [number, number, number, number], duration: 0.8 };
 
 const menuVariants = {
   hidden: { opacity: 0 },
@@ -34,7 +34,7 @@ const itemVariants = {
   visible: (i: number) => ({
     opacity: 1, 
     y: 0,
-    transition: { duration: 0.4, ease: [0.76, 0, 0.24, 1], delay: 0.1 + (i * 0.05) }
+    transition: { duration: 0.4, ease: [0.76, 0, 0.24, 1] as [number, number, number, number], delay: 0.1 + (i * 0.05) }
   })
 };
 

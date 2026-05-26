@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { projects } from '../data/projects';
-import { ArrowLeft } from 'lucide-react';
 
 const ProjectDetails = () => {
   const { id } = useParams();
