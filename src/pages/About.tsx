@@ -9,7 +9,7 @@ const About = () => {
       transition={{ duration: 0.5 }}
       className="fixed inset-0 w-full min-h-screen bg-[var(--bg-color)] transition-colors duration-800 text-white pt-32 md:pt-48 px-6 md:px-12 z-[60] overflow-y-auto"
     >
-      <div className="max-w-4xl mx-auto mt-20">
+      <div className="w-full max-w-6xl mx-auto mt-20">
         <h1 className="font-display font-black text-4xl md:text-6xl tracking-tighter leading-[0.8] mb-12">
           ABOUT ME
         </h1>
