@@ -42,7 +42,7 @@ const ProjectDetails = () => {
             transition={{ duration: 1.5 }}
             src={project.imageUrl} 
             alt={project.title} 
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover border border-black"
           />
           <h1 className="absolute -bottom-8 md:-bottom-16 left-6 md:left-12 font-display font-black text-white text-6xl md:text-[12rem] tracking-tighter leading-[0.85] opacity-90 pointer-events-none z-10">
             {project.title}
@@ -95,7 +95,7 @@ const ProjectDetails = () => {
               if (block.type === 'image') {
                 return (
                   <motion.figure key={idx} {...motionProps} className="w-full">
-                    <img src={block.url} alt={block.caption || 'Project image'} className="w-full h-auto object-cover" />
+                    <img src={block.url} alt={block.caption || 'Project image'} className="w-full h-auto object-cover border border-black" />
                     {block.caption && (
                       <figcaption className="mt-4 text-xs md:text-sm font-bold opacity-50 uppercase tracking-widest">
                         {block.caption}
@@ -109,7 +109,7 @@ const ProjectDetails = () => {
                   <motion.div key={idx} {...motionProps} className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 w-full">
                     {block.images.map((img, imgIdx) => (
                       <figure key={imgIdx} className="w-full h-full flex flex-col">
-                        <img src={img.url} alt={img.caption || 'Gallery image'} className="w-full flex-1 object-cover" />
+                        <img src={img.url} alt={img.caption || 'Gallery image'} className="w-full flex-1 object-cover border border-black" />
                         {img.caption && (
                           <figcaption className="mt-2 text-xs md:text-sm font-bold opacity-50 uppercase tracking-widest">
                             {img.caption}
