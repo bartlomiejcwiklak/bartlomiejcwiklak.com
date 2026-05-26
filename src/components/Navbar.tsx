@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -20,6 +20,48 @@ const EMAIL = "contact@bartlomiejcwiklak.com";
 const STUDIO_TEXT = "-";
 
 const customTransition = { ease: [0.76, 0, 0.24, 1] as [number, number, number, number], duration: 0.8 };
+
+type MobileActionState = 'menu' | 'close' | 'back';
+type MobileOverlayView = 'menu' | 'about';
+
+const aboutBioParagraphs = [
+  "Hi! My name is Bartek, I'm 22 and I'm a graphic and layout designer pursuing a bachelor's degree in Computer Science from Poland.",
+  "I'm a 2nd year student of Computer Science at the International Faculty of Engineering at Lodz University of Technology. The courses I've taken include Algorithms and Data Structures, Programming and Data Structures in C, Object-Oriented Programming in C++, Java Fundamentals, Web Programming, Computer Networks, Databases, and more. Since I'm at the international faculty, I'm pursuing my degree entirely in English.",
+  "I graduated from Zespol Szkol Elektronicznych im. Bohaterow Westerplatte in Radom in 2024, where I also specialized in Computer Science. During those years I learned the basics of programming in Pascal, C++, Java, and HTML/CSS/JS.",
+  "I am primarily a graphic and layout designer. I've been creating visual media ever since I can remember. I have about 5 years of professional experience in graphic design. I have worked with clients from all across the world, creating visually compelling designs for various purposes, mostly advertising campaigns and social media posts. In my high school years, I was the editor-in-chief of the school magazine, responsible for its layout, typography, and overall visual design.",
+  "Outside of graphic design, I do programming. I have experience with many programming stacks and languages - it's safe to say I don't have a preferred one. I've worked with C, C++, C#, Python, Java, Pascal, HTML, CSS, JavaScript, TypeScript, PHP, SQL, and many frameworks such as .NET, React, Node.js. I have experience with creating .NET Windows Forms applications, as well as Android apps with Android Studio. Right now I'm interested in creating web applications, such as the one you're currently viewing.",
+  "As my personal hobby I do music production. I am proficient in both FL Studio and Ableton Live, and I play around with music in various genres. It's a great creative outlet for me. I've had some success with it, producing and selling music for underground artists.",
+  "During my years in high school I also taught myself video editing: I know my ways around Vegas Pro, Premiere Pro and some basics of After Effects. I am yet to learn DaVinci Resolve, but I plan to do so in the future.",
+  "In 2024 I got a Certificate of Advanced English from Cambridge University. This is an official C1 certificate, on which I scored 206 out of 210, which grants me the C2 CEFR level. This has been handy for me during my studies and while working with international clients.",
+  "I'm always open to new projects and collaborations! If you'd like to discuss a potential partnership or just say hi, feel free to reach out.",
+];
+
+const iconMap = {
+  menu: Menu,
+  close: X,
+  back: ArrowLeft,
+} as const;
+
+const MobileActionIcon = ({ state }: { state: MobileActionState }) => {
+  const Icon = iconMap[state];
+
+  return (
+    <div className="grid h-8 w-8 place-items-center text-current" aria-hidden="true">
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.span
+          key={state}
+          initial={{ opacity: 0, rotate: -35, scale: 0.8 }}
+          animate={{ opacity: 1, rotate: 0, scale: 1 }}
+          exit={{ opacity: 0, rotate: 35, scale: 0.8 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+          className="flex items-center justify-center"
+        >
+          <Icon size={28} strokeWidth={2.25} />
+        </motion.span>
+      </AnimatePresence>
+    </div>
+  );
+};
 
 const menuVariants = {
   hidden: { opacity: 0 },
@@ -45,16 +87,33 @@ const Navbar = () => {
   const isProjectPage = location.pathname.startsWith('/project');
   const isAboutPage = location.pathname === '/about';
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [mobileOverlayView, setMobileOverlayView] = useState<MobileOverlayView>('menu');
   const [isHidden, setIsHidden] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(false);
   const { scrollY } = useScroll();
 
   const isTopNav = (isProjectPage && !isAtBottom) || isAboutPage;
+  const mobileActionState: MobileActionState = isMobileOpen
+    ? (mobileOverlayView === 'about' ? 'back' : 'close')
+    : ((isProjectPage || isAboutPage) ? 'back' : 'menu');
 
   useLayoutEffect(() => {
     setIsAtBottom(false);
     setIsHidden(false);
   }, [isProjectPage, location.pathname]);
+
+  useEffect(() => {
+    if (!isMobileOpen) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isMobileOpen]);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const atBottom = window.innerHeight + latest >= document.documentElement.scrollHeight - 50;
@@ -71,6 +130,27 @@ const Navbar = () => {
     { label: t('common.about'), href: '/about' },
     { label: t('common.linkedin'), href: 'https://www.linkedin.com/in/bartlomiejcwiklak/' },
   ];
+
+  const handleMobileAction = () => {
+    if (isMobileOpen) {
+      if (mobileOverlayView === 'about') {
+        setMobileOverlayView('menu');
+        return;
+      }
+
+      setIsMobileOpen(false);
+      setMobileOverlayView('menu');
+      return;
+    }
+
+    if (isProjectPage || isAboutPage) {
+      navigate('/');
+      return;
+    }
+
+    setMobileOverlayView('menu');
+    setIsMobileOpen(true);
+  };
 
   return (
     <>
@@ -105,26 +185,25 @@ const Navbar = () => {
           </motion.h1>
         </motion.div>
 
-        {(isProjectPage || isAboutPage) ? (
-          <button
-            className={cn(
-              "pointer-events-auto p-2 rounded-full cursor-pointer hover:bg-black hover:text-white transition-colors duration-300",
-              isProjectPage ? "text-black bg-white" : "text-white hover:bg-white hover:text-black"
-            )}
-            onClick={() => navigate('/')}
-          >
-            <ArrowLeft size={24} />
-          </button>
-        ) : (
-          !isMobileOpen && (
-            <button
-              onClick={() => setIsMobileOpen(true)}
-              className="pointer-events-auto p-2 text-white"
-            >
-              <Menu size={32} />
-            </button>
-          )
-        )}
+        <motion.button
+          whileTap={{ scale: 0.94 }}
+          aria-label={
+            mobileActionState === 'close'
+              ? 'Close menu'
+              : mobileActionState === 'back'
+                ? 'Go back'
+                : 'Open menu'
+          }
+          onClick={handleMobileAction}
+          className={cn(
+            "pointer-events-auto h-11 w-11 flex items-center justify-center rounded-full cursor-pointer transition-colors duration-300",
+            mobileActionState === 'back'
+              ? (isProjectPage ? "text-black bg-white hover:bg-black hover:text-white" : "text-white hover:bg-white hover:text-black")
+              : "text-white hover:bg-white/15"
+          )}
+        >
+          <MobileActionIcon state={mobileActionState} />
+        </motion.button>
       </motion.div>
 
       {/* Mobile Menu Overlay */}
@@ -137,7 +216,7 @@ const Navbar = () => {
             transition={{ duration: 0.3 }}
             className="fixed inset-0 z-50 bg-[var(--bg-color)] transition-colors duration-800 text-white p-6 flex flex-col pointer-events-auto"
           >
-            <div className="flex justify-between items-start">
+            <div className="flex justify-start items-start">
               <motion.h1
                 layout="position"
                 layoutId="logo"
@@ -154,46 +233,103 @@ const Navbar = () => {
               >
                 <Logo />
               </motion.h1>
-              <button onClick={() => setIsMobileOpen(false)} className="p-2">
-                <X size={32} />
-              </button>
             </div>
 
-            <motion.div 
-              variants={menuVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              className="flex-1 flex flex-col justify-center items-start pl-2"
-            >
-              {navLinks.map((link, i) => (
-                <motion.button
-                  custom={i}
-                  variants={itemVariants}
-                  key={i}
-                  className="mb-6 hover:opacity-70 transition-all duration-300 text-left flex items-center gap-2 cursor-pointer font-bold"
-                  onClick={() => {
-                    if (link.href.startsWith('http')) {
-                      window.open(link.href, '_blank', 'noopener,noreferrer');
-                    } else if (link.href !== '#') {
-                      navigate(link.href);
-                    }
-                  }}
+            <AnimatePresence mode="wait" initial={false}>
+              {mobileOverlayView === 'menu' ? (
+                <motion.div
+                  key="mobile-menu-view"
+                  variants={menuVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  className="flex-1 flex flex-col justify-center items-start pl-2"
                 >
-                  <span className="text-xs opacity-50">0{i + 1}</span> {link.label}
-                </motion.button>
-              ))}
+                  {navLinks.map((link, i) => (
+                    <motion.button
+                      custom={i}
+                      variants={itemVariants}
+                      key={i}
+                      className="mb-6 hover:opacity-70 transition-all duration-300 text-left flex items-center gap-2 cursor-pointer font-bold"
+                      onClick={() => {
+                        if (link.href === '/about') {
+                          setMobileOverlayView('about');
+                          return;
+                        }
 
-              <motion.div custom={navLinks.length} variants={itemVariants} className="mt-6 mb-6 flex flex-col font-sans text-sm font-light opacity-80">
-                <span>{STUDIO_TEXT}</span>
-                <span>{t('home.role')}</span>
-              </motion.div>
-              
-              <motion.div custom={navLinks.length + 1} variants={itemVariants} className="flex flex-col font-sans text-sm font-light opacity-80">
-                <span>{t('home.location')}</span>
-                <a href={`mailto:${EMAIL}`} className="hover:opacity-70 transition-opacity font-bold">{EMAIL}</a>
-              </motion.div>
-            </motion.div>
+                        setIsMobileOpen(false);
+                        setMobileOverlayView('menu');
+
+                        if (link.href.startsWith('http')) {
+                          window.open(link.href, '_blank', 'noopener,noreferrer');
+                        } else if (link.href !== '#') {
+                          navigate(link.href);
+                        }
+                      }}
+                    >
+                      <span className="text-xs opacity-50">0{i + 1}</span> {link.label}
+                    </motion.button>
+                  ))}
+
+                  <motion.div custom={navLinks.length} variants={itemVariants} className="mt-6 mb-6 flex flex-col font-sans text-sm font-light opacity-80">
+                    <span>{STUDIO_TEXT}</span>
+                    <span>{t('home.role')}</span>
+                  </motion.div>
+
+                  <motion.div custom={navLinks.length + 1} variants={itemVariants} className="flex flex-col font-sans text-sm font-light opacity-80">
+                    <span>{t('home.location')}</span>
+                    <a href={`mailto:${EMAIL}`} className="hover:opacity-70 transition-opacity font-bold">{EMAIL}</a>
+                  </motion.div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="mobile-about-view"
+                  initial={{ opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 12 }}
+                  transition={{ duration: 0.28, ease: 'easeOut' }}
+                  className="flex-1 overflow-y-auto no-scrollbar pt-10 pb-8"
+                  style={{ WebkitOverflowScrolling: 'touch' }}
+                >
+                  <div className="max-w-3xl">
+                    <motion.h2
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.25, ease: 'easeOut' }}
+                      className="font-display font-black text-4xl tracking-tighter leading-[0.9] mb-8"
+                    >
+                      ABOUT ME
+                    </motion.h2>
+                    <motion.div
+                      initial="hidden"
+                      animate="visible"
+                      variants={{
+                        hidden: {},
+                        visible: {
+                          transition: {
+                            staggerChildren: 0.06,
+                            delayChildren: 0.05,
+                          },
+                        },
+                      }}
+                      className="space-y-5 text-sm leading-relaxed opacity-85"
+                    >
+                      {aboutBioParagraphs.map((paragraph, idx) => (
+                        <motion.p
+                          key={idx}
+                          variants={{
+                            hidden: { opacity: 0, y: 10 },
+                            visible: { opacity: 1, y: 0, transition: { duration: 0.24, ease: 'easeOut' } },
+                          }}
+                        >
+                          {paragraph}
+                        </motion.p>
+                      ))}
+                    </motion.div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         )}
       </AnimatePresence>

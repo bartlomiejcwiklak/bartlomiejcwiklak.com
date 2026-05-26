@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 const About = () => {
   return (
     <motion.div
-      initial={{ opacity: 0 }}
+      initial={false}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
@@ -16,13 +16,31 @@ const About = () => {
         </h1>
         <div className="text-base md:text-xl leading-relaxed font-normal opacity-80 space-y-8">
           <p>
-            Hi, I'm Bartłomiej. I combine a technical mindset with a strong sense of aesthetics.
+            Hi! My name is Bartek, I'm 22 and I'm a graphic and layout designer pursuing a bachelor's degree in Computer Science from Poland.
           </p>
           <p>
-            I'm a Computer Science student at Lodz University of Technology, working as a freelance Web Developer and Graphic Designer.
+            I'm a 2nd year student of Computer Science at the International Faculty of Engineering at Lodz University of Technology. The courses I've taken include Algorithms and Data Structures, Programming and Data Structures in C, Object-Oriented Programming in C++, Java Fundamentals, Web Programming, Computer Networks, Databases, and more. Since I'm at the international faculty, I'm pursuing my degree entirely in English.
           </p>
           <p>
-            I specialize in building fast, modern websites with clean code and minimalist interfaces. Beyond tech and design, I work as an online English teacher, helping others overcome language barriers. I strongly believe that in both code and design, less is always more.
+            I graduated from Zespol Szkol Elektronicznych im. Bohaterow Westerplatte in Radom in 2024, where I also specialized in Computer Science. During those years I learned the basics of programming in Pascal, C++, Java, and HTML/CSS/JS.
+          </p>
+          <p>
+            I am primarily a graphic and layout designer. I've been creating visual media ever since I can remember. I have about 5 years of professional experience in graphic design. I have worked with clients from all across the world, creating visually compelling designs for various purposes, mostly advertising campaigns and social media posts. In my high school years, I was the editor-in-chief of the school magazine, responsible for its layout, typography, and overall visual design.
+          </p>
+          <p>
+            Outside of graphic design, I do programming. I have experience with many programming stacks and languages - it's safe to say I don't have a preferred one. I've worked with C, C++, C#, Python, Java, Pascal, HTML, CSS, JavaScript, TypeScript, PHP, SQL, and many frameworks such as .NET, React, Node.js. I have experience with creating .NET Windows Forms applications, as well as Android apps with Android Studio. Right now I'm interested in creating web applications, such as the one you're currently viewing.
+          </p>
+          <p>
+            As my personal hobby I do music production. I am proficient in both FL Studio and Ableton Live, and I play around with music in various genres. It's a great creative outlet for me. I've had some success with it, producing and selling music for underground artists.
+          </p>
+          <p>
+            During my years in high school I also taught myself video editing: I know my ways around Vegas Pro, Premiere Pro and some basics of After Effects. I am yet to learn DaVinci Resolve, but I plan to do so in the future.
+          </p>
+          <p>
+            In 2024 I got a Certificate of Advanced English from Cambridge University. This is an official C1 certificate, on which I scored 206 out of 210, which grants me the C2 CEFR level. This has been handy for me during my studies and while working with international clients.
+          </p>
+          <p>
+            I'm always open to new projects and collaborations! If you'd like to discuss a potential partnership or just say hi, feel free to reach out.
           </p>
 
           <div className="pt-8">
