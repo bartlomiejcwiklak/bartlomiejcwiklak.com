@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -51,7 +51,7 @@ const Navbar = () => {
 
   const isTopNav = (isProjectPage && !isAtBottom) || isAboutPage;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const updateNavPosition = () => {
       const latest = window.scrollY;
       const atBottom = window.innerHeight + latest >= document.documentElement.scrollHeight - 50;
