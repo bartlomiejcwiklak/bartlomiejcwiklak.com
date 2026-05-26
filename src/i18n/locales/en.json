@@ -1,0 +1,17 @@
+{
+  "common": {
+    "about": "about",
+    "twitter": "twitter",
+    "instagram": "instagram",
+    "linkedin": "linkedin",
+    "design": "design"
+  },
+  "home": {
+    "title": "projects",
+    "role": "graphic & web designer",
+    "location": "lodz, poland"
+  },
+  "project": {
+    "back": "back to home"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "common": {
+    "about": "o mnie",
+    "twitter": "twitter",
+    "instagram": "instagram",
+    "linkedin": "linkedin",
+    "design": "projekt"
+  },
+  "home": {
+    "title": "projekty",
+    "role": "graphic & web designer",
+    "location": "łódź, polska"
+  },
+  "project": {
+    "back": "wróć na stronę główną"
+  }
+}
