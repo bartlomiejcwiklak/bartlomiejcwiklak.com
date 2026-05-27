@@ -3,10 +3,10 @@ import { motion } from 'framer-motion';
 const About = () => {
   return (
     <motion.div
-      initial={false}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -12 }}
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       className="fixed inset-0 w-full h-[100dvh] bg-[var(--bg-color)] transition-colors duration-800 text-white pt-32 md:pt-48 pb-24 md:pb-16 px-6 md:px-12 z-[60] overflow-y-auto overscroll-y-contain"
       style={{ WebkitOverflowScrolling: 'touch' }}
     >
