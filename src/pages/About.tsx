@@ -14,6 +14,15 @@ const About = () => {
         <h1 className="font-display font-black text-4xl md:text-6xl tracking-tighter leading-[0.8] mb-12">
           ABOUT ME
         </h1>
+        <div className="md:hidden mb-10">
+          <a
+            href="/resume.pdf"
+            download
+            className="inline-flex w-full items-center justify-center rounded-full bg-white px-8 py-4 font-bold text-black transition-all duration-300 hover:scale-[1.02] hover:bg-gray-100"
+          >
+            DOWNLOAD RESUME
+          </a>
+        </div>
         <div className="text-base md:text-xl leading-relaxed font-normal opacity-80 space-y-8">
           <p>
             Hi! My name is Bartek, I'm 22 and I'm a graphic and layout designer pursuing a bachelor's degree in Computer Science from Poland.
@@ -43,7 +52,7 @@ const About = () => {
             I'm always open to new projects and collaborations! If you'd like to discuss a potential partnership or just say hi, feel free to reach out.
           </p>
 
-          <div className="pt-8">
+          <div className="hidden pt-8 md:block">
             <a 
               href="/resume.pdf" 
               download 
