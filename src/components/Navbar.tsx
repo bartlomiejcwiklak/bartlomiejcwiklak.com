@@ -344,7 +344,7 @@ const Navbar = () => {
         }}
         layout="position"
         className={cn(
-          "hidden md:grid fixed left-0 w-full z-[70] px-12 transition-colors duration-700",
+          "hidden md:grid fixed left-0 w-full z-[70] px-12 transition-colors duration-700 pointer-events-none",
           isTopNav ? "top-0 pt-6" : "bottom-0 pb-12",
           isProjectPage ? "text-black" : "text-white"
         )}
@@ -359,7 +359,7 @@ const Navbar = () => {
         <motion.div
           layout="position"
           transition={{ layout: customTransition }}
-          className="cursor-pointer"
+          className="cursor-pointer pointer-events-auto"
           onClick={() => {
             if (location.pathname === '/') {
               document.body.classList.toggle('theme-black');
@@ -397,7 +397,7 @@ const Navbar = () => {
             height: isTopNav ? 0 : "auto",
           }}
           transition={{ duration: 0.5, layout: customTransition }}
-          className="flex flex-col text-sm font-light overflow-hidden transition-colors duration-700"
+          className="flex flex-col text-sm font-light overflow-hidden transition-colors duration-700 pointer-events-auto"
         >
           <span className="opacity-70">{STUDIO_TEXT}</span>
           <span>{t('home.role')}</span>
@@ -415,7 +415,7 @@ const Navbar = () => {
             height: isTopNav ? 0 : "auto",
           }}
           transition={{ duration: 0.5, layout: customTransition }}
-          className="flex flex-col text-sm font-light overflow-hidden transition-colors duration-700"
+          className="flex flex-col text-sm font-light overflow-hidden transition-colors duration-700 pointer-events-auto"
         >
           <span>{t('home.location')}</span>
           <a href={`mailto:${EMAIL}`} className="hover:opacity-70 transition-opacity w-fit font-bold">{EMAIL}</a>
@@ -429,7 +429,7 @@ const Navbar = () => {
             gridColumn: "3",
             gridRow: isTopNav ? "1" : "2",
           }}
-          className="flex flex-col space-y-1 items-start justify-end text-sm font-light transition-colors duration-700"
+          className="flex flex-col space-y-1 items-start justify-end text-sm font-light transition-colors duration-700 pointer-events-auto"
         >
           {navLinks.map((link, i) => (
             <button
