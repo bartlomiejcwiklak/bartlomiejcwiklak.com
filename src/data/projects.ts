@@ -38,6 +38,23 @@ export const projects: Project[] = [
     ]
   },
   {
+    id: "velmont",
+    title: "VELMONT",
+    year: "2026",
+    category: "Web Design",
+    imageUrl: "/images/velmont.jpg",
+    description: "Building a digital presence that communicates exclusivity without saying too much. A multilingual editorial website for an international private office serving entrepreneurs, investors and high-net-worth families.",
+    content: [
+      { type: 'text', value: "Velmont is an international private office serving a discreet clientele of entrepreneurs, investors and high-net-worth families. The brief was precise: build a digital presence that communicates exclusivity without saying too much — quiet, editorial, and immediately trustworthy." },
+      { type: 'text', value: "The design leans on a bespoke luxury palette, full-viewport editorial sections and carefully tuned Framer Motion animations to create a sense of unhurried confidence." },
+      { type: 'image', url: "/images/velmont/luxury.webp" },
+      { type: 'text', value: "The site supports five languages — English, Polish, Spanish, French and Arabic — with full right-to-left layout for Arabic, including a mirrored hero gradient, reversed scroll indicators and locale-aware navbar styling. All routing and translation is handled by next-intl with hreflang alternates, a generated sitemap and JSON-LD structured data for search visibility across markets." },
+      { type: 'text', value: "On the technical side, every image was converted to WebP (18 MB → 2.3 MB), fonts are self-hosted via next/font to eliminate render-blocking requests, and the contact form is powered by Resend with server-side validation." },
+      { type: 'image', url: "/images/velmont/screen1.png" },
+      { type: 'text', value: "The codebase supports both static export and a full Node.js server deployment — the same build targets GitHub Pages or a production VPS without any code changes." },
+    ]
+  },
+  {
     id: "idme",
     title: "IDME",
     year: "2026",
