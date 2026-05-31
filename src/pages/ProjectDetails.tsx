@@ -44,7 +44,7 @@ const ProjectDetails = () => {
             alt={project.title} 
             className="w-full h-full object-cover border border-black"
           />
-          <h1 className="absolute -bottom-8 md:-bottom-16 left-6 md:left-12 font-display font-black text-white text-6xl md:text-[12rem] tracking-tighter leading-[0.85] opacity-90 pointer-events-none z-10">
+          <h1 className="absolute -bottom-8 md:-bottom-16 left-6 md:left-12 font-display font-black text-white text-6xl md:text-[12rem] tracking-tighter leading-[0.85] opacity-90 pointer-events-none z-10" style={{ WebkitTextStroke: '1px black' }}>
             {project.title}
           </h1>
         </motion.div>
