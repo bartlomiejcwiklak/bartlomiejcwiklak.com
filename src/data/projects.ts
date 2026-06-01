@@ -1,6 +1,6 @@
 export type ContentBlock =
   | { type: 'text'; value: string }
-  | { type: 'quote'; value: string; author?: string }
+  | { type: 'quote'; value: string; author?: string; link?: string }
   | { type: 'image'; url: string; caption?: string }
   | { type: 'gallery'; images: { url: string; caption?: string }[] };
 
@@ -46,6 +46,7 @@ export const projects: Project[] = [
     description: "Building a digital presence that communicates exclusivity without saying too much. A multilingual editorial website for an international private office serving entrepreneurs, investors and high-net-worth families.",
     content: [
       { type: 'text', value: "Velmont is an international private office serving a discreet clientele of entrepreneurs, investors and high-net-worth families. The brief was precise: build a digital presence that communicates exclusivity without saying too much — quiet, editorial, and immediately trustworthy." },
+      { type: 'quote', value: "This was definitely one of the best collaborations I have ever had the opportunity to experience.", author: "Piotr, Head of Velmont Co.", link: "https://www.trustpilot.com/reviews/6a1dea25f01def0ca3af5064" },
       { type: 'text', value: "The design leans on a bespoke luxury palette, full-viewport editorial sections and carefully tuned Framer Motion animations to create a sense of unhurried confidence." },
       { type: 'image', url: "/images/velmont/luxury.webp" },
       { type: 'text', value: "The site supports five languages — English, Polish, Spanish, French and Arabic — with full right-to-left layout for Arabic, including a mirrored hero gradient, reversed scroll indicators and locale-aware navbar styling. All routing and translation is handled by next-intl with hreflang alternates, a generated sitemap and JSON-LD structured data for search visibility across markets." },

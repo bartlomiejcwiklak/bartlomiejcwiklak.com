@@ -86,7 +86,13 @@ const ProjectDetails = () => {
                     {block.author && (
                       <span className="text-xs md:text-sm font-bold opacity-50 uppercase tracking-widest flex items-center gap-4">
                         <div className="w-8 h-[2px] bg-current"></div>
-                        {block.author}
+                        {block.link ? (
+                          <a href={block.link} target="_blank" rel="noopener noreferrer" className="hover:opacity-100 transition-opacity underline underline-offset-4">
+                            {block.author}
+                          </a>
+                        ) : (
+                          block.author
+                        )}
                       </span>
                     )}
                   </motion.div>
