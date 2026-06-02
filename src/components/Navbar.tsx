@@ -346,20 +346,28 @@ const Navbar = () => {
       <motion.nav
         layout="position"
         initial={{ opacity: 0, y: isTopNav ? -20 : 20 }}
-        animate={{ opacity: isHidden ? 0 : 1, y: isHidden ? -100 : 0 }}
+        animate={{
+          opacity: isHidden ? 0 : 1,
+          y: isHidden ? -100 : 0,
+          rowGap: isTopNav ? 0 : 24,
+          paddingTop: isTopNav ? 24 : 0,
+          paddingBottom: isTopNav ? 0 : 48,
+        }}
         transition={{
           default: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+          rowGap: { duration: layoutDuration, ease: [0.76, 0, 0.24, 1] },
+          paddingTop: { duration: layoutDuration, ease: [0.76, 0, 0.24, 1] },
+          paddingBottom: { duration: layoutDuration, ease: [0.76, 0, 0.24, 1] },
           layout: { duration: layoutDuration, ease: [0.76, 0, 0.24, 1] },
         }}
         className={cn(
           "hidden md:grid fixed left-0 w-full z-[70] px-12 transition-colors duration-700 pointer-events-none",
-          isTopNav ? "top-0 pt-6" : "bottom-0 pb-12",
+          isTopNav ? "top-0" : "bottom-0",
           isProjectPage ? "text-black" : "text-white"
         )}
         style={{
           gridTemplateColumns: "200px 250px auto",
           columnGap: "4rem",
-          rowGap: isTopNav ? "0px" : "1.5rem",
           alignItems: "end",
         }}
       >
@@ -390,16 +398,13 @@ const Navbar = () => {
 
         {/* Column 1 - Studio info */}
         <motion.div
-          style={{
-            gridColumn: "1",
-            gridRow: "2",
-          }}
-          animate={{
-            opacity: isTopNav ? 0 : 1,
-            height: isTopNav ? 0 : "auto",
-          }}
-          transition={{ duration: 0.5 }}
-          className="flex flex-col text-sm font-light overflow-hidden transition-colors duration-700 pointer-events-auto"
+          style={{ gridColumn: "1", gridRow: "2" }}
+          animate={{ opacity: isTopNav ? 0 : 1, y: isTopNav ? 6 : 0 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className={cn(
+            "flex flex-col text-sm font-light transition-colors duration-700",
+            isTopNav ? "pointer-events-none" : "pointer-events-auto"
+          )}
         >
           <button
             onClick={toggleLang}
@@ -414,23 +419,22 @@ const Navbar = () => {
 
         {/* Column 2 - Location info */}
         <motion.div
-          style={{
-            gridColumn: "2",
-            gridRow: "2",
-          }}
-          animate={{
-            opacity: isTopNav ? 0 : 1,
-            height: isTopNav ? 0 : "auto",
-          }}
-          transition={{ duration: 0.5 }}
-          className="flex flex-col text-sm font-light overflow-hidden transition-colors duration-700 pointer-events-auto"
+          style={{ gridColumn: "2", gridRow: "2" }}
+          animate={{ opacity: isTopNav ? 0 : 1, y: isTopNav ? 6 : 0 }}
+          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: isTopNav ? 0 : 0.07 }}
+          className={cn(
+            "flex flex-col text-sm font-light transition-colors duration-700",
+            isTopNav ? "pointer-events-none" : "pointer-events-auto"
+          )}
         >
           <span>{t('home.location')}</span>
           <a href={`mailto:${EMAIL}`} className="hover:opacity-70 transition-opacity w-fit font-bold">{EMAIL}</a>
         </motion.div>
 
         {/* Column 3 - Links */}
-        <div
+        <motion.div
+          layout="position"
+          transition={{ layout: { duration: layoutDuration, ease: [0.76, 0, 0.24, 1] } }}
           style={{
             gridColumn: "3",
             gridRow: isTopNav ? "1" : "2",
@@ -452,7 +456,7 @@ const Navbar = () => {
               <span className="text-xs opacity-50">0{i + 1}</span> {link.label}
             </button>
           ))}
-        </div>
+        </motion.div>
       </motion.nav>
 
       {/* Back button for desktop on Project or About Page */}
