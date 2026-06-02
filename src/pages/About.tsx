@@ -1,6 +1,18 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
+
+const EMAIL = "contact@bartlomiejcwiklak.com";
+const LINKEDIN = "https://www.linkedin.com/in/bartlomiejcwiklak/";
+
+const fadeUp = (delay = 0) => ({
+  initial: { opacity: 0, y: 16 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const, delay },
+});
 
 const About = () => {
+  const { t } = useTranslation();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -10,57 +22,92 @@ const About = () => {
       className="fixed inset-0 w-full h-[100dvh] bg-[var(--bg-color)] transition-colors duration-800 text-white pt-32 md:pt-48 pb-24 md:pb-16 px-6 md:px-12 z-[60] overflow-y-auto overscroll-y-contain"
       style={{ WebkitOverflowScrolling: 'touch' }}
     >
-      <div className="w-full max-w-6xl mx-auto mt-20">
-        <h1 className="font-display font-black text-4xl md:text-6xl tracking-tighter leading-[0.8] mb-12">
-          ABOUT ME
-        </h1>
-        <div className="md:hidden mb-10">
-          <a
-            href="/resume.pdf"
-            download
-            className="inline-flex w-full items-center justify-center rounded-full bg-white px-8 py-4 font-bold text-black transition-all duration-300 hover:scale-[1.02] hover:bg-gray-100"
-          >
-            DOWNLOAD RESUME
-          </a>
-        </div>
-        <div className="text-base md:text-xl leading-relaxed font-normal opacity-80 space-y-8">
-          <p>
-            Hi! My name is Bartek, I'm 22 and I'm a graphic and layout designer pursuing a bachelor's degree in Computer Science from Poland.
-          </p>
-          <p>
-            I'm a 2nd year student of Computer Science at the International Faculty of Engineering at Lodz University of Technology. The courses I've taken include Algorithms and Data Structures, Programming and Data Structures in C, Object-Oriented Programming in C++, Java Fundamentals, Web Programming, Computer Networks, Databases, and more. Since I'm at the international faculty, I'm pursuing my degree entirely in English.
-          </p>
-          <p>
-            I graduated from Zespol Szkol Elektronicznych im. Bohaterow Westerplatte in Radom in 2024, where I also specialized in Computer Science. During those years I learned the basics of programming in Pascal, C++, Java, and HTML/CSS/JS.
-          </p>
-          <p>
-            I am primarily a graphic and layout designer. I've been creating visual media ever since I can remember. I have about 5 years of professional experience in graphic design. I have worked with clients from all across the world, creating visually compelling designs for various purposes, mostly advertising campaigns and social media posts. In my high school years, I was the editor-in-chief of the school magazine, responsible for its layout, typography, and overall visual design.
-          </p>
-          <p>
-            Outside of graphic design, I do programming. I have experience with many programming stacks and languages - it's safe to say I don't have a preferred one. I've worked with C, C++, C#, Python, Java, Pascal, HTML, CSS, JavaScript, TypeScript, PHP, SQL, and many frameworks such as .NET, React, Node.js. I have experience with creating .NET Windows Forms applications, as well as Android apps with Android Studio. Right now I'm interested in creating web applications, such as the one you're currently viewing.
-          </p>
-          <p>
-            As my personal hobby I do music production. I am proficient in both FL Studio and Ableton Live, and I play around with music in various genres. It's a great creative outlet for me. I've had some success with it, producing and selling music for underground artists.
-          </p>
-          <p>
-            During my years in high school I also taught myself video editing: I know my ways around Vegas Pro, Premiere Pro and some basics of After Effects. I am yet to learn DaVinci Resolve, but I plan to do so in the future.
-          </p>
-          <p>
-            In 2024 I got a Certificate of Advanced English from Cambridge University. This is an official C1 certificate, on which I scored 206 out of 210, which grants me the C2 CEFR level. This has been handy for me during my studies and while working with international clients.
-          </p>
-          <p>
-            I'm always open to new projects and collaborations! If you'd like to discuss a potential partnership or just say hi, feel free to reach out.
-          </p>
+      <div className="w-full max-w-6xl mx-auto mt-10 md:mt-16">
+        <div className="flex flex-col md:flex-row md:gap-20 lg:gap-32">
 
-          <div className="hidden pt-8 md:block">
-            <a 
-              href="/resume.pdf" 
-              download 
-              className="inline-block bg-white text-black font-bold px-8 py-4 rounded-full hover:scale-105 hover:bg-gray-100 transition-all duration-300"
+          {/* Left: lead + paragraphs */}
+          <div className="flex-1 min-w-0">
+            <motion.p
+              {...fadeUp(0.1)}
+              className="text-2xl md:text-3xl font-bold leading-snug mb-8 md:mb-10"
             >
-              DOWNLOAD RESUME
-            </a>
+              {t('about.lead')}
+            </motion.p>
+
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: {},
+                visible: { transition: { staggerChildren: 0.09, delayChildren: 0.2 } },
+              }}
+              className="space-y-5 text-sm md:text-base leading-relaxed opacity-65 max-w-xl"
+            >
+              {(['p1', 'p2', 'p3'] as const).map((key) => (
+                <motion.p
+                  key={key}
+                  variants={{
+                    hidden: { opacity: 0, y: 10 },
+                    visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' } },
+                  }}
+                >
+                  {t(`about.${key}`)}
+                </motion.p>
+              ))}
+            </motion.div>
           </div>
+
+          {/* Right: contact + availability */}
+          <motion.div
+            {...fadeUp(0.3)}
+            className="mt-12 md:mt-0 shrink-0 md:w-64 flex flex-col gap-7 text-sm"
+          >
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.18em] opacity-40 mb-2">{t('about.availability')}</p>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-green-400 shrink-0" />
+                <span className="font-medium">{t('about.availabilityValue')}</span>
+              </div>
+            </div>
+
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.18em] opacity-40 mb-2">{t('about.contact')}</p>
+              <a
+                href={`mailto:${EMAIL}`}
+                className="font-medium hover:opacity-60 transition-opacity whitespace-nowrap"
+              >
+                {EMAIL}
+              </a>
+            </div>
+
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.18em] opacity-40 mb-2">{t('about.location')}</p>
+              <p className="font-medium">{t('about.locationValue')}</p>
+            </div>
+
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.18em] opacity-40 mb-2">{t('about.links')}</p>
+              <a
+                href={LINKEDIN}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium hover:opacity-60 transition-opacity"
+              >
+                LinkedIn ↗
+              </a>
+            </div>
+
+            <div className="pt-2">
+              <a
+                href="/resume.pdf"
+                download
+                className="inline-block border border-white/30 px-5 py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors duration-300"
+              >
+                {t('about.downloadResume')}
+              </a>
+            </div>
+          </motion.div>
+
         </div>
       </div>
     </motion.div>

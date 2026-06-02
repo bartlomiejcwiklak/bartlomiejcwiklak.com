@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState, useEffect } from 'react';
+import { useLayoutEffect, useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -24,17 +24,7 @@ const customTransition = { ease: [0.76, 0, 0.24, 1] as [number, number, number, 
 type MobileActionState = 'menu' | 'close' | 'back';
 type MobileOverlayView = 'menu' | 'about';
 
-const aboutBioParagraphs = [
-  "Hi! My name is Bartek, I'm 22 and I'm a graphic and layout designer pursuing a bachelor's degree in Computer Science from Poland.",
-  "I'm a 2nd year student of Computer Science at the International Faculty of Engineering at Lodz University of Technology. The courses I've taken include Algorithms and Data Structures, Programming and Data Structures in C, Object-Oriented Programming in C++, Java Fundamentals, Web Programming, Computer Networks, Databases, and more. Since I'm at the international faculty, I'm pursuing my degree entirely in English.",
-  "I graduated from Zespol Szkol Elektronicznych im. Bohaterow Westerplatte in Radom in 2024, where I also specialized in Computer Science. During those years I learned the basics of programming in Pascal, C++, Java, and HTML/CSS/JS.",
-  "I am primarily a graphic and layout designer. I've been creating visual media ever since I can remember. I have about 5 years of professional experience in graphic design. I have worked with clients from all across the world, creating visually compelling designs for various purposes, mostly advertising campaigns and social media posts. In my high school years, I was the editor-in-chief of the school magazine, responsible for its layout, typography, and overall visual design.",
-  "Outside of graphic design, I do programming. I have experience with many programming stacks and languages - it's safe to say I don't have a preferred one. I've worked with C, C++, C#, Python, Java, Pascal, HTML, CSS, JavaScript, TypeScript, PHP, SQL, and many frameworks such as .NET, React, Node.js. I have experience with creating .NET Windows Forms applications, as well as Android apps with Android Studio. Right now I'm interested in creating web applications, such as the one you're currently viewing.",
-  "As my personal hobby I do music production. I am proficient in both FL Studio and Ableton Live, and I play around with music in various genres. It's a great creative outlet for me. I've had some success with it, producing and selling music for underground artists.",
-  "During my years in high school I also taught myself video editing: I know my ways around Vegas Pro, Premiere Pro and some basics of After Effects. I am yet to learn DaVinci Resolve, but I plan to do so in the future.",
-  "In 2024 I got a Certificate of Advanced English from Cambridge University. This is an official C1 certificate, on which I scored 206 out of 210, which grants me the C2 CEFR level. This has been handy for me during my studies and while working with international clients.",
-  "I'm always open to new projects and collaborations! If you'd like to discuss a potential partnership or just say hi, feel free to reach out.",
-];
+import { aboutBullets, aboutBulletsPl } from '../data/about';
 
 const iconMap = {
   menu: Menu,
@@ -81,7 +71,9 @@ const itemVariants = {
 };
 
 const Navbar = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const toggleLang = () => i18n.changeLanguage(i18n.language === 'pl' ? 'en' : 'pl');
+  const bullets = i18n.language === 'pl' ? aboutBulletsPl : aboutBullets;
   const location = useLocation();
   const navigate = useNavigate();
   const isProjectPage = location.pathname.startsWith('/project');
@@ -91,6 +83,9 @@ const Navbar = () => {
   const [isHidden, setIsHidden] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(false);
   const { scrollY } = useScroll();
+  const prevHiddenRef = useRef(false);
+  useEffect(() => { prevHiddenRef.current = isHidden; });
+  const layoutDuration = (prevHiddenRef.current && !isHidden) ? 0 : 0.8;
 
   const isTopNav = (isProjectPage && !isAtBottom) || isAboutPage;
   const mobileActionState: MobileActionState = isMobileOpen
@@ -271,12 +266,23 @@ const Navbar = () => {
                     </motion.button>
                   ))}
 
-                  <motion.div custom={navLinks.length} variants={itemVariants} className="mt-6 mb-6 flex flex-col font-sans text-sm font-light opacity-80">
+                  <motion.div custom={navLinks.length} variants={itemVariants} className="mt-6 mb-2">
+                    <button
+                      onClick={toggleLang}
+                      className="flex items-center gap-2 text-sm font-bold cursor-pointer hover:opacity-70 transition-opacity"
+                    >
+                      <span className={i18n.language !== 'pl' ? 'opacity-100' : 'opacity-30'}>EN</span>
+                      <span className="opacity-30">·</span>
+                      <span className={i18n.language === 'pl' ? 'opacity-100' : 'opacity-30'}>PL</span>
+                    </button>
+                  </motion.div>
+
+                  <motion.div custom={navLinks.length + 1} variants={itemVariants} className="mt-4 mb-6 flex flex-col font-sans text-sm font-light opacity-80">
                     <span>{STUDIO_TEXT}</span>
                     <span>{t('home.role')}</span>
                   </motion.div>
 
-                  <motion.div custom={navLinks.length + 1} variants={itemVariants} className="flex flex-col font-sans text-sm font-light opacity-80">
+                  <motion.div custom={navLinks.length + 2} variants={itemVariants} className="flex flex-col font-sans text-sm font-light opacity-80">
                     <span>{t('home.location')}</span>
                     <a href={`mailto:${EMAIL}`} className="hover:opacity-70 transition-opacity font-bold">{EMAIL}</a>
                   </motion.div>
@@ -312,18 +318,20 @@ const Navbar = () => {
                           },
                         },
                       }}
-                      className="space-y-5 text-sm leading-relaxed opacity-85"
+                      className="space-y-2 text-sm opacity-85"
                     >
-                      {aboutBioParagraphs.map((paragraph, idx) => (
-                        <motion.p
+                      {bullets.map((bullet, idx) => (
+                        <motion.div
                           key={idx}
                           variants={{
                             hidden: { opacity: 0, y: 10 },
                             visible: { opacity: 1, y: 0, transition: { duration: 0.24, ease: 'easeOut' } },
                           }}
+                          className="flex items-start gap-3"
                         >
-                          {paragraph}
-                        </motion.p>
+                          <span className="opacity-30 shrink-0 mt-[2px]">—</span>
+                          <span>{bullet}</span>
+                        </motion.div>
                       ))}
                     </motion.div>
                   </div>
@@ -336,13 +344,13 @@ const Navbar = () => {
 
       {/* Desktop Navbar */}
       <motion.nav
+        layout="position"
         initial={{ opacity: 0, y: isTopNav ? -20 : 20 }}
         animate={{ opacity: isHidden ? 0 : 1, y: isHidden ? -100 : 0 }}
         transition={{
-          default: { duration: 0.3, ease: "easeInOut" },
-          layout: customTransition
+          default: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+          layout: { duration: layoutDuration, ease: [0.76, 0, 0.24, 1] },
         }}
-        layout="position"
         className={cn(
           "hidden md:grid fixed left-0 w-full z-[70] px-12 transition-colors duration-700 pointer-events-none",
           isTopNav ? "top-0 pt-6" : "bottom-0 pb-12",
@@ -356,9 +364,7 @@ const Navbar = () => {
         }}
       >
         {/* Logo Section */}
-        <motion.div
-          layout="position"
-          transition={{ layout: customTransition }}
+        <div
           className="cursor-pointer pointer-events-auto"
           onClick={() => {
             if (location.pathname === '/') {
@@ -372,22 +378,18 @@ const Navbar = () => {
             gridRow: "1",
           }}
         >
-          <motion.h1
-            layoutId="logo-desktop"
-            layout="position"
-            transition={{ layout: customTransition }}
+          <h1
             className={cn(
               "font-display font-black text-4xl md:text-5xl leading-none tracking-tighter origin-top-left transition-colors duration-700 hover:text-transparent",
               isProjectPage ? "text-black hover:text-stroke" : "text-white hover:text-stroke-white"
             )}
           >
             <Logo />
-          </motion.h1>
-        </motion.div>
+          </h1>
+        </div>
 
         {/* Column 1 - Studio info */}
         <motion.div
-          layout="position"
           style={{
             gridColumn: "1",
             gridRow: "2",
@@ -396,16 +398,22 @@ const Navbar = () => {
             opacity: isTopNav ? 0 : 1,
             height: isTopNav ? 0 : "auto",
           }}
-          transition={{ duration: 0.5, layout: customTransition }}
+          transition={{ duration: 0.5 }}
           className="flex flex-col text-sm font-light overflow-hidden transition-colors duration-700 pointer-events-auto"
         >
-          <span className="opacity-70">{STUDIO_TEXT}</span>
+          <button
+            onClick={toggleLang}
+            className="flex items-center gap-1 text-xs font-medium cursor-pointer hover:opacity-70 transition-opacity mb-0.5"
+          >
+            <span className={i18n.language !== 'pl' ? 'opacity-100' : 'opacity-30'}>EN</span>
+            <span className="opacity-30 mx-0.5">·</span>
+            <span className={i18n.language === 'pl' ? 'opacity-100' : 'opacity-30'}>PL</span>
+          </button>
           <span>{t('home.role')}</span>
         </motion.div>
 
         {/* Column 2 - Location info */}
         <motion.div
-          layout="position"
           style={{
             gridColumn: "2",
             gridRow: "2",
@@ -414,7 +422,7 @@ const Navbar = () => {
             opacity: isTopNav ? 0 : 1,
             height: isTopNav ? 0 : "auto",
           }}
-          transition={{ duration: 0.5, layout: customTransition }}
+          transition={{ duration: 0.5 }}
           className="flex flex-col text-sm font-light overflow-hidden transition-colors duration-700 pointer-events-auto"
         >
           <span>{t('home.location')}</span>
@@ -422,9 +430,7 @@ const Navbar = () => {
         </motion.div>
 
         {/* Column 3 - Links */}
-        <motion.div
-          layout="position"
-          transition={{ layout: customTransition }}
+        <div
           style={{
             gridColumn: "3",
             gridRow: isTopNav ? "1" : "2",
@@ -446,7 +452,7 @@ const Navbar = () => {
               <span className="text-xs opacity-50">0{i + 1}</span> {link.label}
             </button>
           ))}
-        </motion.div>
+        </div>
       </motion.nav>
 
       {/* Back button for desktop on Project or About Page */}

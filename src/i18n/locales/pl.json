@@ -13,5 +13,22 @@
   },
   "project": {
     "back": "wróć na stronę główną"
+  },
+  "categories": {
+    "Graphic Design": "Projektowanie graficzne",
+    "Web Design": "Projektowanie stron"
+  },
+  "about": {
+    "availability": "Dostępność",
+    "availabilityValue": "Dostępny na projekty",
+    "contact": "Kontakt",
+    "location": "Lokalizacja",
+    "locationValue": "Łódź, Polska",
+    "links": "Linki",
+    "downloadResume": "Pobierz CV",
+    "lead": "Bartek, 22. Projektant graficzny i developer z Łodzi.",
+    "p1": "Jestem projektantem graficznym i layoutu z 5-letnim doświadczeniem — kampanie reklamowe, editorial i social media dla klientów z całego świata. W liceum byłem redaktorem naczelnym gazety szkolnej.",
+    "p2": "Jestem też developerem. Aktualnie student informatyki 2. roku na Politechnice Łódzkiej, biegły w wielu stackach: TypeScript, React, Node.js, Python, C++, SQL i innych.",
+    "p3": "Poza pracą produkuję muzykę w FL Studio i Abletonie. Posiadam certyfikat Cambridge C2 English (206/210)."
   }
 }

@@ -10,7 +10,7 @@ export default {
         primary: '#5F12B1',
       },
       fontFamily: {
-        sans: ['"Roboto Mono"', 'monospace'],
+        sans: ['"DM Sans"', 'sans-serif'],
         display: ['"HK Grotesk Wide"', 'sans-serif'],
       },
     },
