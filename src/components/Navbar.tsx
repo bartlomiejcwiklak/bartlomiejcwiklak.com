@@ -22,9 +22,7 @@ const STUDIO_TEXT = "-";
 const customTransition = { ease: [0.76, 0, 0.24, 1] as [number, number, number, number], duration: 0.8 };
 
 type MobileActionState = 'menu' | 'close' | 'back';
-type MobileOverlayView = 'menu' | 'about';
 
-import { aboutBullets, aboutBulletsPl } from '../data/about';
 
 const iconMap = {
   menu: Menu,
@@ -73,13 +71,11 @@ const itemVariants = {
 const Navbar = () => {
   const { t, i18n } = useTranslation();
   const toggleLang = () => i18n.changeLanguage(i18n.language === 'pl' ? 'en' : 'pl');
-  const bullets = i18n.language === 'pl' ? aboutBulletsPl : aboutBullets;
   const location = useLocation();
   const navigate = useNavigate();
   const isProjectPage = location.pathname.startsWith('/project');
   const isAboutPage = location.pathname === '/about';
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [mobileOverlayView, setMobileOverlayView] = useState<MobileOverlayView>('menu');
   const [isHidden, setIsHidden] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(false);
   const { scrollY } = useScroll();
@@ -89,7 +85,7 @@ const Navbar = () => {
 
   const isTopNav = (isProjectPage && !isAtBottom) || isAboutPage;
   const mobileActionState: MobileActionState = isMobileOpen
-    ? (mobileOverlayView === 'about' ? 'back' : 'close')
+    ? 'close'
     : ((isProjectPage || isAboutPage) ? 'back' : 'menu');
 
   useLayoutEffect(() => {
@@ -128,13 +124,7 @@ const Navbar = () => {
 
   const handleMobileAction = () => {
     if (isMobileOpen) {
-      if (mobileOverlayView === 'about') {
-        setMobileOverlayView('menu');
-        return;
-      }
-
       setIsMobileOpen(false);
-      setMobileOverlayView('menu');
       return;
     }
 
@@ -143,7 +133,6 @@ const Navbar = () => {
       return;
     }
 
-    setMobileOverlayView('menu');
     setIsMobileOpen(true);
   };
 
@@ -230,114 +219,53 @@ const Navbar = () => {
               </motion.h1>
             </div>
 
-            <AnimatePresence mode="wait" initial={false}>
-              {mobileOverlayView === 'menu' ? (
-                <motion.div
-                  key="mobile-menu-view"
-                  variants={menuVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  className="flex-1 flex flex-col justify-center items-start pl-2"
+            <motion.div
+              variants={menuVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="flex-1 flex flex-col justify-center items-start pl-2"
+            >
+              {navLinks.map((link, i) => (
+                <motion.button
+                  custom={i}
+                  variants={itemVariants}
+                  key={i}
+                  className="mb-6 hover:opacity-70 transition-all duration-300 text-left flex items-center gap-2 cursor-pointer font-bold"
+                  onClick={() => {
+                    setIsMobileOpen(false);
+                    if (link.href.startsWith('http')) {
+                      window.open(link.href, '_blank', 'noopener,noreferrer');
+                    } else {
+                      navigate(link.href);
+                    }
+                  }}
                 >
-                  {navLinks.map((link, i) => (
-                    <motion.button
-                      custom={i}
-                      variants={itemVariants}
-                      key={i}
-                      className="mb-6 hover:opacity-70 transition-all duration-300 text-left flex items-center gap-2 cursor-pointer font-bold"
-                      onClick={() => {
-                        if (link.href === '/about') {
-                          setMobileOverlayView('about');
-                          return;
-                        }
+                  <span className="text-xs opacity-50">0{i + 1}</span> {link.label}
+                </motion.button>
+              ))}
 
-                        setIsMobileOpen(false);
-                        setMobileOverlayView('menu');
-
-                        if (link.href.startsWith('http')) {
-                          window.open(link.href, '_blank', 'noopener,noreferrer');
-                        } else if (link.href !== '#') {
-                          navigate(link.href);
-                        }
-                      }}
-                    >
-                      <span className="text-xs opacity-50">0{i + 1}</span> {link.label}
-                    </motion.button>
-                  ))}
-
-                  <motion.div custom={navLinks.length} variants={itemVariants} className="mt-6 mb-2">
-                    <button
-                      onClick={toggleLang}
-                      className="flex items-center gap-2 text-sm font-bold cursor-pointer hover:opacity-70 transition-opacity"
-                    >
-                      <span className={i18n.language !== 'pl' ? 'opacity-100' : 'opacity-30'}>EN</span>
-                      <span className="opacity-30">·</span>
-                      <span className={i18n.language === 'pl' ? 'opacity-100' : 'opacity-30'}>PL</span>
-                    </button>
-                  </motion.div>
-
-                  <motion.div custom={navLinks.length + 1} variants={itemVariants} className="mt-4 mb-6 flex flex-col font-sans text-sm font-light opacity-80">
-                    <span>{STUDIO_TEXT}</span>
-                    <span>{t('home.role')}</span>
-                  </motion.div>
-
-                  <motion.div custom={navLinks.length + 2} variants={itemVariants} className="flex flex-col font-sans text-sm font-light opacity-80">
-                    <span>{t('home.location')}</span>
-                    <a href={`mailto:${EMAIL}`} className="hover:opacity-70 transition-opacity font-bold">{EMAIL}</a>
-                  </motion.div>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="mobile-about-view"
-                  initial={{ opacity: 0, y: 18 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 12 }}
-                  transition={{ duration: 0.28, ease: 'easeOut' }}
-                  className="flex-1 overflow-y-auto no-scrollbar pt-10 pb-8"
-                  style={{ WebkitOverflowScrolling: 'touch' }}
+              <motion.div custom={navLinks.length} variants={itemVariants} className="mt-6 mb-2">
+                <button
+                  onClick={toggleLang}
+                  className="flex items-center gap-2 text-sm font-bold cursor-pointer hover:opacity-70 transition-opacity"
                 >
-                  <div className="max-w-3xl">
-                    <motion.h2
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.25, ease: 'easeOut' }}
-                      className="font-display font-black text-4xl tracking-tighter leading-[0.9] mb-8"
-                    >
-                      ABOUT ME
-                    </motion.h2>
-                    <motion.div
-                      initial="hidden"
-                      animate="visible"
-                      variants={{
-                        hidden: {},
-                        visible: {
-                          transition: {
-                            staggerChildren: 0.06,
-                            delayChildren: 0.05,
-                          },
-                        },
-                      }}
-                      className="space-y-2 text-sm opacity-85"
-                    >
-                      {bullets.map((bullet, idx) => (
-                        <motion.div
-                          key={idx}
-                          variants={{
-                            hidden: { opacity: 0, y: 10 },
-                            visible: { opacity: 1, y: 0, transition: { duration: 0.24, ease: 'easeOut' } },
-                          }}
-                          className="flex items-start gap-3"
-                        >
-                          <span className="opacity-30 shrink-0 mt-[2px]">—</span>
-                          <span>{bullet}</span>
-                        </motion.div>
-                      ))}
-                    </motion.div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  <span className={i18n.language !== 'pl' ? 'opacity-100' : 'opacity-30'}>EN</span>
+                  <span className="opacity-30">·</span>
+                  <span className={i18n.language === 'pl' ? 'opacity-100' : 'opacity-30'}>PL</span>
+                </button>
+              </motion.div>
+
+              <motion.div custom={navLinks.length + 1} variants={itemVariants} className="mt-4 mb-6 flex flex-col font-sans text-sm font-light opacity-80">
+                <span>{STUDIO_TEXT}</span>
+                <span>{t('home.role')}</span>
+              </motion.div>
+
+              <motion.div custom={navLinks.length + 2} variants={itemVariants} className="flex flex-col font-sans text-sm font-light opacity-80">
+                <span>{t('home.location')}</span>
+                <a href={`mailto:${EMAIL}`} className="hover:opacity-70 transition-opacity font-bold">{EMAIL}</a>
+              </motion.div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
