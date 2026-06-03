@@ -92,6 +92,25 @@ export const projects: Project[] = [
     }
   },
   {
+    id: "ustr",
+    title: "USTR.STORE",
+    year: "2026",
+    category: "Web Design",
+    imageUrl: "/images/ustr/cover.jpg",
+    description: "A digital storefront built for a rising generation. An e-commerce website for ustr.store — a young adult clothing brand rooted in bold aesthetics and a culture-first approach to fashion.",
+    content: [
+      { type: 'text', value: "ustr.store is an emerging clothing brand aimed squarely at the young adult market — a generation that blends streetwear sensibility with a demand for something that feels real. The brief was to build a web presence as direct and confident as the brand itself." },
+      { type: 'text', value: "The design prioritises clean hierarchy, fast product discovery and a visual language that speaks to the brand's audience without shouting at them — bold without being loud, minimal without being cold." },
+    ],
+    pl: {
+      description: "Cyfrowy sklep dla wschodzącego pokolenia. Sklep internetowy dla ustr.store — marki odzieżowej typu young adult, zbudowanej wokół odważnej estetyki i podejścia, w którym kultura jest na pierwszym miejscu.",
+      content: [
+        { type: 'text', value: "ustr.store to wschodząca marka odzieżowa skierowana do młodych dorosłych — pokolenia łączącego streetwearową wrażliwość z potrzebą autentyczności. Zadaniem było stworzenie obecności w sieci tak świeżej i bezpośredniej jak sama marka." },
+        { type: 'text', value: "Design stawia na czystą hierarchię, szybkie odkrywanie produktów i język wizualny, który przemawia do odbiorców — odważny bez krzykliwości, minimalistyczny bez chłodu." },
+      ]
+    }
+  },
+  {
     id: "idme",
     title: "IDME",
     year: "2026",
