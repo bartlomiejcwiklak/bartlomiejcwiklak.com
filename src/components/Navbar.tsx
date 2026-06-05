@@ -120,6 +120,7 @@ const Navbar = () => {
   const navLinks = [
     { label: t('common.about'), href: '/about' },
     { label: t('common.linkedin'), href: 'https://www.linkedin.com/in/bartlomiejcwiklak/' },
+    { label: t('common.instagram'), href: 'https://www.instagram.com/bartlomiejcwiklak/' },
   ];
 
   const handleMobileAction = () => {
@@ -231,7 +232,7 @@ const Navbar = () => {
                   custom={i}
                   variants={itemVariants}
                   key={i}
-                  className="mb-6 hover:opacity-70 transition-all duration-300 text-left flex items-center gap-2 cursor-pointer font-bold"
+                  className="mb-6 hover:opacity-70 transition-all duration-300 text-left flex items-center gap-2 cursor-pointer font-bold whitespace-nowrap"
                   onClick={() => {
                     setIsMobileOpen(false);
                     if (link.href.startsWith('http')) {
@@ -241,7 +242,8 @@ const Navbar = () => {
                     }
                   }}
                 >
-                  <span className="text-xs opacity-50">0{i + 1}</span> {link.label}
+                  <span className="text-xs opacity-50 shrink-0">0{i + 1}</span>
+                  <span>{link.label}</span>
                 </motion.button>
               ))}
 

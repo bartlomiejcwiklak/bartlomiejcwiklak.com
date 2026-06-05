@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 const EMAIL = "contact@bartlomiejcwiklak.com";
 const LINKEDIN = "https://www.linkedin.com/in/bartlomiejcwiklak/";
+const INSTAGRAM = "https://www.instagram.com/bartlomiejcwiklak/";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 16 },
@@ -87,14 +88,24 @@ const About = () => {
 
             <div>
               <p className="text-[10px] uppercase tracking-[0.18em] opacity-40 mb-2">{t('about.links')}</p>
-              <a
-                href={LINKEDIN}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-medium hover:opacity-60 transition-opacity"
-              >
-                LinkedIn ↗
-              </a>
+              <div className="flex flex-col gap-1.5">
+                <a
+                  href={LINKEDIN}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium hover:opacity-60 transition-opacity"
+                >
+                  LinkedIn ↗
+                </a>
+                <a
+                  href={INSTAGRAM}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium hover:opacity-60 transition-opacity"
+                >
+                  Instagram ↗
+                </a>
+              </div>
             </div>
 
             <div className="pt-2">
