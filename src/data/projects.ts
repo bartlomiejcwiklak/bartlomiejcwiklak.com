@@ -143,7 +143,7 @@ export const projects: Project[] = [
     id: "topgolf",
     title: "TOPGOLF X YOASOBI",
     year: "2026",
-    category: "Web Design",
+    category: "Graphic Design",
     imageUrl: "/images/yoasobi1.jpg",
     description: "Bridging the gap between active entertainment and vibrant J-Pop. A high-impact promotional poster celebrating a unique crossover event between the US-based entertainment venue Topgolf and the acclaimed Japanese music duo YOASOBI.",
     content: [
