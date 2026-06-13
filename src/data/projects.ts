@@ -111,6 +111,27 @@ export const projects: Project[] = [
     }
   },
   {
+    id: "hometria",
+    title: "HOMETRIA",
+    year: "2026",
+    category: "Web Design",
+    imageUrl: "/images/hometria.jpg",
+    description: "A clean, conversion-focused property platform. A website for Hometria — a real estate listings office built to connect buyers, renters and agents through an intuitive, trust-first digital experience.",
+    content: [
+      { type: 'text', value: "Hometria is a real estate listings office connecting buyers, renters and agents in one place. The brief was to move away from the cluttered, information-heavy aesthetic typical of the industry and build something that felt genuinely modern — clear, calm and easy to navigate." },
+      { type: 'text', value: "The design centres on strong property photography, a structured listings layout and a search experience that gets users to the right offer in as few steps as possible. Every detail — from filter placement to card hierarchy — was shaped around reducing friction and building confidence at each step of the decision process." },
+      { type: 'text', value: "The result is a platform that feels as considered as the properties it presents: clean grid layouts, generous whitespace, and a visual language that positions Hometria as a trustworthy partner rather than just another listings board." },
+    ],
+    pl: {
+      description: "Przejrzysta platforma nieruchomości nastawiona na konwersję. Strona dla Hometria — biura ofert nieruchomości łączącego kupujących, najemców i agentów przez intuicyjny, budujący zaufanie serwis.",
+      content: [
+        { type: 'text', value: "Hometria to biuro ofert nieruchomości łączące kupujących, najemców i agentów w jednym miejscu. Zadaniem było odejście od przeładowanej, informacyjnie ciężkiej estetyki typowej dla branży i stworzenie czegoś naprawdę nowoczesnego — klarownego, spokojnego i łatwego w nawigacji." },
+        { type: 'text', value: "Design skupia się na mocnej fotografii nieruchomości, przejrzystym układzie ogłoszeń i doświadczeniu wyszukiwania, które prowadzi użytkownika do właściwej oferty w jak najmniejszej liczbie kroków. Każdy detal — od umiejscowienia filtrów po hierarchię kart — kształtowany był pod kątem redukcji tarcia i budowania zaufania na każdym etapie procesu decyzyjnego." },
+        { type: 'text', value: "Efektem jest platforma, która jest tak przemyślana jak prezentowane na niej nieruchomości: czyste układy siatkowe, przestronne białe tło i język wizualny pozycjonujący Hometria jako zaufanego partnera, a nie tylko kolejną tablicę ogłoszeń." },
+      ]
+    }
+  },
+  {
     id: "idme",
     title: "IDME",
     year: "2026",
