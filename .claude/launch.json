@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "portfolio",
-      "runtimeExecutable": "npm.cmd",
+      "runtimeExecutable": "D:\\Program Files\\nodejs\\npm.cmd",
       "runtimeArgs": ["run", "dev"],
       "port": 5173
     }

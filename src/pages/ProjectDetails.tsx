@@ -50,51 +50,67 @@ const ProjectDetails = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="w-full min-h-screen bg-white text-black pt-32 md:pt-48 pb-[100px]"
+      className="w-full bg-white text-black"
     >
-      <div className="w-full mx-auto">
 
-        {/* Hero image */}
-        <motion.div
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="relative w-full h-[75vh] md:h-auto md:aspect-[21/9] bg-gray-100 overflow-hidden"
-        >
-          <motion.img
-            initial={{ scale: 1.1 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 1.5 }}
-            src={project.imageUrl}
-            alt={project.title}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/0 to-black/0 pointer-events-none" />
-          <h1
-            className="absolute -bottom-8 md:-bottom-16 left-6 md:left-12 font-display font-black text-white text-6xl md:text-[12rem] tracking-tighter leading-[0.85] pointer-events-none z-10"
-            style={{ WebkitTextStroke: '1px rgba(0,0,0,0.3)' }}
+      {/* HERO — full screen, title only */}
+      <section className="min-h-screen flex flex-col justify-between px-6 md:px-12 pt-32 md:pt-44 pb-10 md:pb-14">
+        <div className="flex items-center justify-between">
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="text-xs font-sans uppercase tracking-[0.18em] opacity-40"
           >
-            {project.title}
-          </h1>
-        </motion.div>
-
-        {/* Content area */}
-        <motion.div
+            {category}
+          </motion.span>
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="text-xs font-sans tabular-nums opacity-40"
+          >
+            {project.year}
+          </motion.span>
+        </div>
+        <motion.h1
           initial={{ y: 40, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="mt-24 md:mt-48"
+          transition={{ delay: 0.15, duration: 0.7 }}
+          className="font-display font-black text-black leading-[0.85] tracking-tighter text-[15vw]"
         >
+          {project.title}
+        </motion.h1>
+      </section>
 
-          {/* Metadata strip */}
-          <div className="border-t border-b border-black px-6 md:px-12 py-4 md:py-5 flex items-center justify-between">
-            <span className="text-xs font-sans uppercase tracking-[0.18em] opacity-40">
-              {category}
-            </span>
-            <span className="text-xs font-sans tabular-nums opacity-40">
-              {project.year}
-            </span>
-          </div>
+      {/* COVER IMAGE — full screen */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5, duration: 0.8 }}
+        className="h-screen w-full overflow-hidden"
+      >
+        <motion.img
+          initial={{ scale: 1.05 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 1.8 }}
+          src={project.imageUrl}
+          alt={project.title}
+          className="w-full h-full object-cover"
+        />
+      </motion.div>
+
+      {/* CONTENT */}
+      <div>
+        {/* Metadata strip */}
+        <div className="border-t border-b border-black px-6 md:px-12 py-4 md:py-5 flex items-center justify-between">
+          <span className="text-xs font-sans uppercase tracking-[0.18em] opacity-40">
+            {category}
+          </span>
+          <span className="text-xs font-sans tabular-nums opacity-40">
+            {project.year}
+          </span>
+        </div>
 
           {/* Description */}
           <div className="px-6 md:px-12 max-w-5xl mx-auto pt-10 md:pt-14 pb-12 md:pb-16">
@@ -189,7 +205,6 @@ const ProjectDetails = () => {
             )}
           </div>
 
-        </motion.div>
       </div>
 
       {/* Lightbox */}
