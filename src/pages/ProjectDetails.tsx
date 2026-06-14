@@ -135,9 +135,9 @@ const ProjectDetails = () => {
 
               if (block.type === 'quote') {
                 return (
-                  <motion.div key={idx} {...blockMotion} className="w-full bg-black text-white px-6 md:px-12 py-14 md:py-20">
-                    <div className="max-w-5xl mx-auto">
-                      <blockquote className="font-display font-black text-3xl md:text-5xl leading-[0.9] tracking-tighter mb-8">
+                  <motion.div key={idx} {...blockMotion} className="w-full bg-black text-white py-14 md:py-20">
+                    <div className="max-w-5xl mx-auto px-6 md:px-12">
+                      <blockquote className="font-display font-black text-3xl md:text-5xl leading-[1.1] tracking-tighter mb-8">
                         "{block.value}"
                       </blockquote>
                       {block.author && (
