@@ -115,7 +115,7 @@ export const projects: Project[] = [
     title: "HOMETRIA",
     year: "2026",
     category: "Web Design",
-    imageUrl: "/images/hometria.jpg",
+    imageUrl: "/images/hometria.png",
     description: "A clean, conversion-focused property platform. A website for Hometria — a real estate listings office built to connect buyers, renters and agents through an intuitive, trust-first digital experience.",
     content: [
       { type: 'text', value: "Hometria is a real estate listings office connecting buyers, renters and agents in one place. The brief was to move away from the cluttered, information-heavy aesthetic typical of the industry and build something that felt genuinely modern — clear, calm and easy to navigate." },
