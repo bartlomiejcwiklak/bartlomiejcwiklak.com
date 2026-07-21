@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { projects } from '../data/projects';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 const itemVariants = {
   hidden: { opacity: 0, x: 100, rotateY: -15, skewX: 0 },
@@ -31,7 +32,18 @@ const itemVariants = {
 
 const Home = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  usePageMeta({
+    title: i18n.language === 'pl'
+      ? 'Bartlomiej Cwiklak | Projekty graficzne i web design'
+      : 'Bartlomiej Cwiklak | Graphic Design and Web Projects',
+    description: i18n.language === 'pl'
+      ? 'Portfolio Bartłomieja Ćwiklaka: branding, design graficzny, plakaty i nowoczesne strony internetowe.'
+      : 'Portfolio of Bartlomiej Cwiklak: branding, graphic design, posters, and modern web design projects.',
+    path: '/',
+    lang: i18n.language,
+  });
 
   return (
     <div className="fixed inset-0 w-full h-full z-0 overflow-hidden">
@@ -44,14 +56,15 @@ const Home = () => {
       >
         <div className="min-h-screen flex flex-col justify-start items-end pb-[40vh] pt-[20vh] pr-6 md:pr-16 w-full">
           {projects.map((project, idx) => (
-            <motion.div
+            <motion.button
               key={project.id}
+              type="button"
               custom={idx}
               variants={itemVariants}
               initial="hidden"
               animate="visible"
               whileHover="hover"
-              className="group cursor-pointer w-full max-w-[95vw] md:max-w-[75vw] text-right origin-right border-b border-white/10 py-3 md:py-2 last:border-b-0"
+              className="group cursor-pointer w-full max-w-[95vw] md:max-w-[75vw] text-right origin-right border-b border-white/10 py-3 md:py-2 last:border-b-0 block bg-transparent border-x-0 border-t-0"
               onClick={() => navigate(`/project/${project.id}`)}
             >
               <div className="flex items-center justify-end gap-3 mb-1">
@@ -69,7 +82,7 @@ const Home = () => {
                   {project.title}
                 </span>
               </h2>
-            </motion.div>
+            </motion.button>
           ))}
         </div>
       </motion.div>

@@ -1,7 +1,14 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 const Privacy = () => {
+  usePageMeta({
+    title: 'Privacy Policy | Bartlomiej Cwiklak',
+    description: 'Privacy policy for bartlomiejcwiklak.com.',
+    path: '/privacy',
+  });
+
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -63,7 +70,7 @@ const Privacy = () => {
             <section className="flex flex-col gap-4">
               <h2 className="font-mono text-xs text-white uppercase tracking-[0.2em]">Cookies</h2>
               <p>
-                This site does not use tracking cookies. Any cookies used would be strictly necessary for the technical operation of the website.
+                This site does not use tracking cookies. The only persisted preference is the selected interface language, which is stored in your browser's local storage to keep the site in Polish or English on future visits.
               </p>
             </section>
 

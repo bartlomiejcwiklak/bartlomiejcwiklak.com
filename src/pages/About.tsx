@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 const EMAIL = "contact@bartlomiejcwiklak.com";
 const LINKEDIN = "https://www.linkedin.com/in/bartlomiejcwiklak/";
@@ -12,7 +13,18 @@ const fadeUp = (delay = 0) => ({
 });
 
 const About = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  usePageMeta({
+    title: i18n.language === 'pl'
+      ? 'O mnie | Bartlomiej Cwiklak'
+      : 'About | Bartlomiej Cwiklak',
+    description: i18n.language === 'pl'
+      ? 'Poznaj Bartłomieja Ćwiklaka: projektanta graficznego i developera z Łodzi.'
+      : 'Learn more about Bartlomiej Cwiklak, a graphic designer and developer from Lodz.',
+    path: '/about',
+    lang: i18n.language,
+  });
 
   return (
     <motion.div

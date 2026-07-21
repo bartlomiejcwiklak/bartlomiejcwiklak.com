@@ -12,9 +12,13 @@
     "location": "lodz, poland"
   },
   "project": {
-    "back": "back to home"
+    "back": "back to home",
+    "comingSoon": "Full project details and visuals will be added soon.",
+    "notFound": "Project not found",
+    "goBack": "Go back"
   },
   "categories": {
+    "Coming Soon": "Coming Soon",
     "Graphic Design": "Graphic Design",
     "Web Design": "Web Design"
   },
@@ -30,5 +34,10 @@
     "p1": "I'm a graphic and layout designer with 5 years of professional experience working with clients worldwide — advertising campaigns, editorial work, and social media. In high school I served as editor-in-chief of the school magazine.",
     "p2": "I'm also a developer. Currently a 2nd-year Computer Science student at Lodz University of Technology, comfortable across many stacks: TypeScript, React, Node.js, Python, C++, SQL, and more.",
     "p3": "Outside of work I produce music in FL Studio and Ableton. I hold a Cambridge C2 English certificate (206/210)."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you opened does not exist or has been moved.",
+    "cta": "Back to home"
   }
 }

@@ -1,9 +1,13 @@
+import { Suspense, lazy } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import Layout from './components/Layout';
 import Home from './pages/Home';
-import ProjectDetails from './pages/ProjectDetails';
-import About from './pages/About';
+
+const About = lazy(() => import('./pages/About'));
+const ProjectDetails = lazy(() => import('./pages/ProjectDetails'));
+const Privacy = lazy(() => import('./components/Privacy'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 function App() {
   const location = useLocation();
@@ -11,11 +15,15 @@ function App() {
   return (
     <Layout>
       <AnimatePresence mode="sync">
-        <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/project/:id" element={<ProjectDetails />} />
-        </Routes>
+        <Suspense fallback={null}>
+          <Routes location={location} key={location.pathname}>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/project/:id" element={<ProjectDetails />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </AnimatePresence>
     </Layout>
   );

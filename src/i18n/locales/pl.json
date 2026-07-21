@@ -12,9 +12,13 @@
     "location": "łódź, polska"
   },
   "project": {
-    "back": "wróć na stronę główną"
+    "back": "wróć na stronę główną",
+    "comingSoon": "Pełny opis projektu i materiały wizualne pojawią się wkrótce.",
+    "notFound": "Nie znaleziono projektu",
+    "goBack": "Wróć"
   },
   "categories": {
+    "Coming Soon": "W przygotowaniu",
     "Graphic Design": "Projektowanie graficzne",
     "Web Design": "Projektowanie stron"
   },
@@ -30,5 +34,10 @@
     "p1": "Jestem projektantem graficznym i layoutu z 5-letnim doświadczeniem — kampanie reklamowe, editorial i social media dla klientów z całego świata. W liceum byłem redaktorem naczelnym gazety szkolnej.",
     "p2": "Jestem też developerem. Aktualnie student informatyki 2. roku na Politechnice Łódzkiej, biegły w wielu stackach: TypeScript, React, Node.js, Python, C++, SQL i innych.",
     "p3": "Poza pracą produkuję muzykę w FL Studio i Abletonie. Posiadam certyfikat Cambridge C2 English (206/210)."
+  },
+  "notFound": {
+    "title": "Nie znaleziono strony",
+    "description": "Strona, którą otwierasz, nie istnieje albo została przeniesiona.",
+    "cta": "Wróć na stronę główną"
   }
 }

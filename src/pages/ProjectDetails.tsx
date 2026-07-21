@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { projects } from '../data/projects';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 const blockMotion = {
   initial: { opacity: 0, y: 24 },
@@ -33,8 +34,8 @@ const ProjectDetails = () => {
   if (!project) {
     return (
       <div className="min-h-screen bg-white text-black flex items-center justify-center">
-        <h1 className="text-4xl">Project not found</h1>
-        <button onClick={() => navigate('/')} className="ml-4 underline">Go back</button>
+        <h1 className="text-4xl">{t('project.notFound')}</h1>
+        <button onClick={() => navigate('/')} className="ml-4 underline">{t('project.goBack')}</button>
       </div>
     );
   }
@@ -43,6 +44,14 @@ const ProjectDetails = () => {
   const description = isPolish && project.pl?.description ? project.pl.description : project.description;
   const content = isPolish && project.pl?.content ? project.pl.content : project.content;
   const category = t(`categories.${project.category}`, project.category);
+  const hasContent = Boolean(content?.length);
+
+  usePageMeta({
+    title: `${project.title} | Bartlomiej Cwiklak`,
+    description,
+    path: `/project/${project.id}`,
+    lang: i18n.language,
+  });
 
   return (
     <motion.div
@@ -121,7 +130,7 @@ const ProjectDetails = () => {
 
           {/* Content blocks */}
           <div className="flex flex-col gap-14 md:gap-20 pb-32 md:pb-48">
-            {content ? content.map((block, idx) => {
+            {hasContent ? (content ?? []).map((block, idx) => {
 
               if (block.type === 'text') {
                 return (
@@ -161,6 +170,8 @@ const ProjectDetails = () => {
                     <img
                       src={block.url}
                       alt={block.caption || 'Project image'}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-auto object-cover cursor-zoom-in"
                       onClick={() => setLightbox({ src: block.url, caption: block.caption })}
                     />
@@ -181,6 +192,8 @@ const ProjectDetails = () => {
                         <img
                           src={img.url}
                           alt={img.caption || 'Gallery image'}
+                          loading="lazy"
+                          decoding="async"
                           className="w-full h-full object-cover cursor-zoom-in"
                           onClick={() => setLightbox({ src: img.url, caption: img.caption })}
                         />
@@ -199,7 +212,7 @@ const ProjectDetails = () => {
             }) : (
               <motion.div {...blockMotion} className="px-6 md:px-12 max-w-5xl mx-auto w-full">
                 <p className="text-base md:text-lg leading-relaxed opacity-60 max-w-2xl">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  {t('project.comingSoon')}
                 </p>
               </motion.div>
             )}

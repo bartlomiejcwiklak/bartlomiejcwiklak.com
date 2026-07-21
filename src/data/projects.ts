@@ -22,7 +22,24 @@ export interface Project {
 
 export const projects: Project[] = [
   {
-    id: "soul crystal",
+    id: "nringbus",
+    title: "NRINGBUS",
+    year: "2026",
+    category: "Coming Soon",
+    imageUrl: "/images/gemini.jpg",
+    description: "Project slot added. Final description, case study and visuals will be published once the materials are ready.",
+    content: [
+      { type: 'text', value: "This project has already been added to the portfolio structure. Full copy, project context and final imagery will be added in the next update." }
+    ],
+    pl: {
+      description: "Projekt został dodany do portfolio. Docelowy opis, case study i materiały wizualne pojawią się po dostarczeniu finalnych treści.",
+      content: [
+        { type: 'text', value: "Projekt jest już dodany do struktury portfolio. Pełny opis, kontekst realizacji i finalne grafiki zostaną uzupełnione w kolejnej aktualizacji." }
+      ]
+    }
+  },
+  {
+    id: "soul-crystal",
     title: "SOUL CRYSTAL",
     year: "2026",
     category: "Graphic Design",
@@ -161,7 +178,7 @@ export const projects: Project[] = [
     }
   },
   {
-    id: "topgolf",
+    id: "topgolf-x-yoasobi",
     title: "TOPGOLF X YOASOBI",
     year: "2026",
     category: "Graphic Design",
@@ -219,7 +236,7 @@ export const projects: Project[] = [
     }
   },
   {
-    id: "posters",
+    id: "poster-study",
     title: "POSTER STUDY",
     year: "2024",
     category: "Graphic Design",

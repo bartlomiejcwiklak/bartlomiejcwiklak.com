@@ -150,12 +150,13 @@ const Navbar = () => {
           animate={{ opacity: isMobileOpen ? 0 : (isHidden ? 0 : 1), y: isHidden ? -100 : 0 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
         >
-          <motion.h1
+          <motion.button
+            type="button"
             layout="position"
             layoutId="logo"
             transition={{ layout: customTransition }}
             className={cn(
-              "font-display font-black text-lg md:text-xl leading-none tracking-tighter pointer-events-auto cursor-pointer hover:text-transparent transition-colors duration-300",
+              "font-display font-black text-left text-lg md:text-xl leading-none tracking-tighter pointer-events-auto cursor-pointer hover:text-transparent transition-colors duration-300 bg-transparent border-0 p-0",
               isProjectPage ? "text-black hover:text-stroke" : "text-white hover:text-stroke-white"
             )}
             onClick={() => {
@@ -167,7 +168,7 @@ const Navbar = () => {
             }}
           >
             <Logo />
-          </motion.h1>
+          </motion.button>
         </motion.div>
 
         <motion.button
@@ -202,11 +203,12 @@ const Navbar = () => {
             className="fixed inset-0 z-50 bg-[var(--bg-color)] transition-colors duration-800 text-white p-6 flex flex-col pointer-events-auto"
           >
             <div className="flex justify-start items-start">
-              <motion.h1
+              <motion.button
+                type="button"
                 layout="position"
                 layoutId="logo"
                 transition={{ layout: customTransition }}
-                className="font-display font-black text-lg md:text-xl leading-none tracking-tighter cursor-pointer text-white hover:text-stroke-white hover:text-transparent transition-colors duration-300"
+                className="font-display font-black text-left text-lg md:text-xl leading-none tracking-tighter cursor-pointer text-white hover:text-stroke-white hover:text-transparent transition-colors duration-300 bg-transparent border-0 p-0"
                 onClick={() => { 
                   if (location.pathname === '/') {
                     document.body.classList.toggle('theme-black');
@@ -217,7 +219,7 @@ const Navbar = () => {
                 }}
               >
                 <Logo />
-              </motion.h1>
+              </motion.button>
             </div>
 
             <motion.div
@@ -302,8 +304,9 @@ const Navbar = () => {
         }}
       >
         {/* Logo Section */}
-        <div
-          className="cursor-pointer pointer-events-auto"
+        <button
+          type="button"
+          className="cursor-pointer pointer-events-auto bg-transparent border-0 p-0 text-left"
           onClick={() => {
             if (location.pathname === '/') {
               document.body.classList.toggle('theme-black');
@@ -324,7 +327,7 @@ const Navbar = () => {
           >
             <Logo />
           </h1>
-        </div>
+        </button>
 
         {/* Column 1 - Studio info */}
         <motion.div
