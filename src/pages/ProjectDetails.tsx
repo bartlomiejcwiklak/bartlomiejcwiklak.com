@@ -19,6 +19,10 @@ const ProjectDetails = () => {
   const project = projects.find(p => p.id === id);
 
   const [lightbox, setLightbox] = useState<{ src: string; caption?: string } | null>(null);
+  const isPolish = i18n.language === 'pl';
+  const description = project
+    ? (isPolish && project.pl?.description ? project.pl.description : project.description)
+    : t('project.notFound');
 
   useLayoutEffect(() => {
     window.scrollTo(0, 0);
@@ -31,6 +35,13 @@ const ProjectDetails = () => {
     return () => window.removeEventListener('keydown', onKey);
   }, [lightbox]);
 
+  usePageMeta({
+    title: project ? `${project.title} | Bartlomiej Cwiklak` : `Project Not Found | Bartlomiej Cwiklak`,
+    description,
+    path: project ? `/project/${project.id}` : '/project/not-found',
+    lang: i18n.language,
+  });
+
   if (!project) {
     return (
       <div className="min-h-screen bg-white text-black flex items-center justify-center">
@@ -40,18 +51,9 @@ const ProjectDetails = () => {
     );
   }
 
-  const isPolish = i18n.language === 'pl';
-  const description = isPolish && project.pl?.description ? project.pl.description : project.description;
   const content = isPolish && project.pl?.content ? project.pl.content : project.content;
   const category = t(`categories.${project.category}`, project.category);
   const hasContent = Boolean(content?.length);
-
-  usePageMeta({
-    title: `${project.title} | Bartlomiej Cwiklak`,
-    description,
-    path: `/project/${project.id}`,
-    lang: i18n.language,
-  });
 
   return (
     <motion.div

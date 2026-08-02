@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -75,23 +75,18 @@ const Navbar = () => {
   const navigate = useNavigate();
   const isProjectPage = location.pathname.startsWith('/project');
   const isAboutPage = location.pathname === '/about';
+  const isBacklogPage = location.pathname === '/backlog';
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [isHidden, setIsHidden] = useState(false);
+  const [scrollTop, setScrollTop] = useState(0);
   const [isAtBottom, setIsAtBottom] = useState(false);
   const { scrollY } = useScroll();
-  const prevHiddenRef = useRef(false);
-  useEffect(() => { prevHiddenRef.current = isHidden; });
-  const layoutDuration = (prevHiddenRef.current && !isHidden) ? 0 : 0.8;
+  const layoutDuration = 0.8;
+  const isHidden = isProjectPage && scrollTop > 50 && !isAtBottom;
 
-  const isTopNav = (isProjectPage && !isAtBottom) || isAboutPage;
+  const isTopNav = (isProjectPage && !isAtBottom) || isAboutPage || isBacklogPage;
   const mobileActionState: MobileActionState = isMobileOpen
     ? 'close'
-    : ((isProjectPage || isAboutPage) ? 'back' : 'menu');
-
-  useLayoutEffect(() => {
-    setIsAtBottom(false);
-    setIsHidden(false);
-  }, [isProjectPage, location.pathname]);
+    : ((isProjectPage || isAboutPage || isBacklogPage) ? 'back' : 'menu');
 
   useEffect(() => {
     if (!isMobileOpen) {
@@ -107,14 +102,9 @@ const Navbar = () => {
   }, [isMobileOpen]);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
+    setScrollTop(latest);
     const atBottom = window.innerHeight + latest >= document.documentElement.scrollHeight - 50;
     setIsAtBottom(atBottom);
-
-    if (isProjectPage && latest > 50 && !atBottom) {
-      setIsHidden(true);
-    } else {
-      setIsHidden(false);
-    }
   });
 
   const navLinks = [
@@ -129,7 +119,7 @@ const Navbar = () => {
       return;
     }
 
-    if (isProjectPage || isAboutPage) {
+    if (isProjectPage || isAboutPage || isBacklogPage) {
       navigate('/');
       return;
     }
@@ -157,7 +147,7 @@ const Navbar = () => {
             transition={{ layout: customTransition }}
             className={cn(
               "font-display font-black text-left text-lg md:text-xl leading-none tracking-tighter pointer-events-auto cursor-pointer hover:text-transparent transition-colors duration-300 bg-transparent border-0 p-0",
-              isProjectPage ? "text-black hover:text-stroke" : "text-white hover:text-stroke-white"
+              (isProjectPage || isBacklogPage) ? "text-black hover:text-stroke" : "text-white hover:text-stroke-white"
             )}
             onClick={() => {
               if (location.pathname === '/') {
@@ -183,10 +173,10 @@ const Navbar = () => {
           onClick={handleMobileAction}
           className={cn(
             "pointer-events-auto h-11 w-11 flex items-center justify-center rounded-full cursor-pointer transition-colors duration-300",
-            mobileActionState === 'back'
-              ? (isProjectPage ? "text-black bg-white hover:bg-black hover:text-white" : "text-white hover:bg-white hover:text-black")
-              : "text-white hover:bg-white/15"
-          )}
+              mobileActionState === 'back'
+                ? ((isProjectPage || isBacklogPage) ? "text-black bg-white hover:bg-black hover:text-white" : "text-white hover:bg-white hover:text-black")
+                : "text-white hover:bg-white/15"
+            )}
         >
           <MobileActionIcon state={mobileActionState} />
         </motion.button>
@@ -295,7 +285,7 @@ const Navbar = () => {
         className={cn(
           "hidden md:grid fixed left-0 w-full z-[70] px-12 transition-colors duration-700 pointer-events-none",
           isTopNav ? "top-0" : "bottom-0",
-          isProjectPage ? "text-black" : "text-white"
+          (isProjectPage || isBacklogPage) ? "text-black" : "text-white"
         )}
         style={{
           gridTemplateColumns: "200px 250px auto",
@@ -322,7 +312,7 @@ const Navbar = () => {
           <h1
             className={cn(
               "font-display font-black text-4xl md:text-5xl leading-none tracking-tighter origin-top-left transition-colors duration-700 hover:text-transparent",
-              isProjectPage ? "text-black hover:text-stroke" : "text-white hover:text-stroke-white"
+              (isProjectPage || isBacklogPage) ? "text-black hover:text-stroke" : "text-white hover:text-stroke-white"
             )}
           >
             <Logo />
@@ -393,7 +383,7 @@ const Navbar = () => {
       </motion.nav>
 
       {/* Back button for desktop on Project or About Page */}
-      {(isProjectPage || isAboutPage) && (
+      {(isProjectPage || isAboutPage || isBacklogPage) && (
         <motion.button
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -401,7 +391,7 @@ const Navbar = () => {
           whileHover={{ x: -5, opacity: 0.7 }}
           className={cn(
             "hidden md:flex fixed top-12 right-12 z-[70] cursor-pointer transition-opacity",
-            isProjectPage ? "text-black" : "text-white"
+            (isProjectPage || isBacklogPage) ? "text-black" : "text-white"
           )}
           onClick={() => navigate('/')}
         >

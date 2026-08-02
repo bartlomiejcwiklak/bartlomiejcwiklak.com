@@ -17,6 +17,28 @@
     "notFound": "Project not found",
     "goBack": "Go back"
   },
+  "backlog": {
+    "eyebrow": "hidden library",
+    "title": "BACKLOG",
+    "description": "A private game library for titles I finished, played, dropped, or still plan to start.",
+    "empty": "The library is empty for now. Add your first game with npm run backlog:add -- \"Game Title\".",
+    "loading": "Loading library...",
+    "error": "The library could not be loaded. Check public/backlog.json.",
+    "updated": "last updated",
+    "notes": "note",
+    "released": "release",
+    "platforms": "platforms",
+    "genres": "genres",
+    "developers": "developer",
+    "rating": "rating",
+    "states": {
+      "playing": "playing",
+      "completed": "completed",
+      "backlog": "backlog",
+      "dropped": "dropped",
+      "replaying": "replaying"
+    }
+  },
   "categories": {
     "Coming Soon": "Coming Soon",
     "Graphic Design": "Graphic Design",

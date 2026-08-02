@@ -17,6 +17,28 @@
     "notFound": "Nie znaleziono projektu",
     "goBack": "Wróć"
   },
+  "backlog": {
+    "eyebrow": "ukryta biblioteka",
+    "title": "BACKLOG",
+    "description": "Prywatna biblioteka gier: ograne, ukończone, porzucone i czekające na swoją kolej.",
+    "empty": "Biblioteka jest jeszcze pusta. Dodaj pierwszą grę poleceniem npm run backlog:add -- \"Tytuł gry\".",
+    "loading": "Ładowanie biblioteki...",
+    "error": "Nie udało się wczytać biblioteki. Sprawdź plik public/backlog.json.",
+    "updated": "ostatnia aktualizacja",
+    "notes": "notatka",
+    "released": "premiera",
+    "platforms": "platformy",
+    "genres": "gatunki",
+    "developers": "studio",
+    "rating": "ocena",
+    "states": {
+      "playing": "gram teraz",
+      "completed": "ukończone",
+      "backlog": "do ogrania",
+      "dropped": "porzucone",
+      "replaying": "wracam"
+    }
+  },
   "categories": {
     "Coming Soon": "W przygotowaniu",
     "Graphic Design": "Projektowanie graficzne",

@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "backlog:add": "node scripts/backlog-add.mjs",
+    "backlog:remove": "node scripts/backlog-remove.mjs"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.3.0",
