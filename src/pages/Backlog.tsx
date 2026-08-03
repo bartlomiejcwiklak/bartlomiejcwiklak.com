@@ -149,8 +149,8 @@ const Backlog = () => {
   const [catalogQuery, setCatalogQuery] = useState('');
   const [catalogResults, setCatalogResults] = useState<SearchResult[]>([]);
   const [isSearchingCatalog, setIsSearchingCatalog] = useState(false);
-  const [createStatus, setCreateStatus] = useState<BacklogStatus>('backlog');
-  const [createPlatforms, setCreatePlatforms] = useState('');
+  const [createItem, setCreateItem] = useState<BacklogItem | null>(null);
+  const [createDraft, setCreateDraft] = useState<DraftItem | null>(null);
   const [editingItem, setEditingItem] = useState<BacklogItem | null>(null);
   const [editDraft, setEditDraft] = useState<DraftItem | null>(null);
 
@@ -239,8 +239,8 @@ const Backlog = () => {
     setIsCreateOpen(false);
     setCatalogQuery('');
     setCatalogResults([]);
-    setCreateStatus('backlog');
-    setCreatePlatforms('');
+    setCreateItem(null);
+    setCreateDraft(null);
   };
 
   const closeEditModal = () => {
@@ -296,9 +296,19 @@ const Backlog = () => {
   };
 
   const handleQuickAdd = async (result: SearchResult) => {
+    const item = itemFromSearch(result, 'backlog', '');
+    setCreateItem(item);
+    setCreateDraft(buildDraft(item));
+  };
+
+  const handleSaveCreate = async () => {
+    if (!createItem || !createDraft) {
+      return;
+    }
+
     try {
       setIsSaving(true);
-      const nextPayload = await upsertBacklogItem(itemFromSearch(result, createStatus, createPlatforms), password);
+      const nextPayload = await upsertBacklogItem(mergeDraft(createItem, createDraft), password);
       savePayload(nextPayload);
       closeCreateModal();
       setAdminMessage(t('backlog.gameAdded'));
@@ -605,44 +615,67 @@ const Backlog = () => {
             </div>
 
             <div className="space-y-4 px-5 py-5 md:px-6">
-              <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_180px_180px]">
-                <label className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-white/45">
-                  <Search size={16} />
-                  <input value={catalogQuery} onChange={(event) => setCatalogQuery(event.target.value)} placeholder={t('backlog.searchCatalog')} className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/30" />
-                </label>
-                <select value={createStatus} onChange={(event) => setCreateStatus(event.target.value as BacklogStatus)} className="rounded-xl border border-white/10 bg-[#16171a] px-4 py-3 text-sm text-white outline-none">
-                  {statusOrder.map((status) => (
-                    <option key={status} value={status}>{t(`backlog.states.${status}`)}</option>
-                  ))}
-                </select>
-                <input value={createPlatforms} onChange={(event) => setCreatePlatforms(event.target.value)} placeholder={t('backlog.quickPlatforms')} className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white outline-none placeholder:text-white/30" />
+              <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-white/45">
+                <Search size={16} />
+                <input value={catalogQuery} onChange={(event) => setCatalogQuery(event.target.value)} placeholder={t('backlog.searchCatalog')} className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/30" />
+                <button type="button" onClick={() => void handleCatalogSearch()} disabled={isSaving || isSearchingCatalog} className="rounded-lg border border-white/10 px-3 py-2 text-sm text-white transition hover:bg-white/[0.05] disabled:opacity-50">
+                  {isSearchingCatalog ? '...' : t('backlog.autofill')}
+                </button>
               </div>
 
-              <button type="button" onClick={() => void handleCatalogSearch()} disabled={isSaving || isSearchingCatalog} className="rounded-xl border border-white/10 px-4 py-3 text-sm text-white transition hover:bg-white/[0.05] disabled:opacity-50">
-                {isSearchingCatalog ? '...' : t('backlog.autofill')}
-              </button>
+              {catalogResults.length > 0 && (
+                <div className="max-h-64 space-y-2 overflow-auto rounded-xl border border-white/10 p-2">
+                  {catalogResults.map((result) => (
+                    <button key={result.id} type="button" onClick={() => handleQuickAdd(result)} className="flex w-full items-center gap-4 rounded-xl px-3 py-3 text-left transition hover:bg-white/[0.04]">
+                      <div className="h-16 w-24 shrink-0 overflow-hidden rounded-lg bg-white/[0.04]">
+                        {result.coverUrl ? <img src={result.coverUrl} alt={result.title} className="h-full w-full object-cover" /> : null}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-sm font-medium text-white">{result.title}</div>
+                        <div className="mt-1 text-xs text-white/35">{formatDate(result.releaseDate, i18n.language) || result.source || ''}</div>
+                        {result.description && <p className="mt-2 text-sm text-white/45">{result.description}</p>}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
 
-              <div className="max-h-[420px] space-y-2 overflow-auto rounded-xl border border-white/10 p-2">
-                {catalogResults.map((result) => (
-                  <div key={result.id} className="flex items-center gap-4 rounded-xl px-3 py-3 transition hover:bg-white/[0.04]">
-                    <div className="h-16 w-24 shrink-0 overflow-hidden rounded-lg bg-white/[0.04]">
-                      {result.coverUrl ? <img src={result.coverUrl} alt={result.title} className="h-full w-full object-cover" /> : null}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-sm font-medium text-white">{result.title}</div>
-                      <div className="mt-1 text-xs text-white/35">{formatDate(result.releaseDate, i18n.language) || result.source || ''}</div>
-                      {result.description && <p className="mt-2 text-sm text-white/45">{result.description}</p>}
-                    </div>
-                    <button type="button" onClick={() => void handleQuickAdd(result)} disabled={isSaving} className="rounded-lg bg-white px-3 py-2 text-sm font-medium text-black transition hover:bg-white/90 disabled:opacity-50">
-                      {t('backlog.addGame')}
+              {catalogQuery && !isSearchingCatalog && catalogResults.length === 0 && (
+                <div className="rounded-xl border border-white/10 px-4 py-6 text-sm text-white/40">{t('backlog.noResults')}</div>
+              )}
+
+              {createDraft ? (
+                <>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <input value={createDraft.title} onChange={(event) => setCreateDraft({ ...createDraft, title: event.target.value })} placeholder={t('backlog.titleLabel')} className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-white outline-none" />
+                    <select value={createDraft.status} onChange={(event) => setCreateDraft({ ...createDraft, status: event.target.value as BacklogStatus })} className="rounded-lg border border-white/10 bg-[#121214] px-3 py-2.5 text-white outline-none">
+                      {statusOrder.map((status) => (
+                        <option key={status} value={status}>{t(`backlog.states.${status}`)}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <input value={createDraft.platforms} onChange={(event) => setCreateDraft({ ...createDraft, platforms: event.target.value })} placeholder={t('backlog.platformsLabel')} className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-white outline-none" />
+                    <input value={createDraft.rating} onChange={(event) => setCreateDraft({ ...createDraft, rating: event.target.value })} placeholder={t('backlog.rating')} className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-white outline-none" />
+                  </div>
+
+                  <textarea value={createDraft.notes} onChange={(event) => setCreateDraft({ ...createDraft, notes: event.target.value })} rows={5} placeholder={t('backlog.notesLabel')} className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-white outline-none" />
+
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <button type="button" onClick={() => void handleSaveCreate()} disabled={isSaving} className="rounded-xl bg-white px-4 py-3 text-sm font-medium text-black transition hover:bg-white/90 disabled:opacity-50">
+                      {isSaving ? t('backlog.saveInProgress') : t('backlog.addGame')}
+                    </button>
+                    <button type="button" onClick={closeCreateModal} disabled={isSaving} className="rounded-xl border border-white/10 px-4 py-3 text-sm text-white/80 transition hover:bg-white/[0.05] disabled:opacity-50">
+                      {t('backlog.cancel')}
                     </button>
                   </div>
-                ))}
-
-                {catalogQuery && !isSearchingCatalog && catalogResults.length === 0 && (
-                  <div className="px-3 py-8 text-sm text-white/40">{t('backlog.noResults')}</div>
-                )}
-              </div>
+                </>
+              ) : (
+                <div className="rounded-xl border border-dashed border-white/10 px-4 py-10 text-sm text-white/35">
+                  {t('backlog.pickGame')}
+                </div>
+              )}
             </div>
           </Modal>
         )}
