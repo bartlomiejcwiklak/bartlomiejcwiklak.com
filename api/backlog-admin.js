@@ -1,4 +1,4 @@
-import { assertPassword, getSupabaseAdmin, handleOptions, mapItemToRow, readBacklogPayload, sendJson } from './_backlog.js';
+import { assertPassword, formatBacklogError, getSupabaseAdmin, handleOptions, mapItemToRow, readBacklogPayload, readJsonBody, sendJson } from './_backlog.js';
 
 export default async function handler(req, res) {
   if (handleOptions(req, res)) {
@@ -11,7 +11,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { action, password, item, id, items } = req.body || {};
+    const { action, password, item, id, items } = await readJsonBody(req);
     assertPassword(password);
 
     const supabase = getSupabaseAdmin();
@@ -46,6 +46,6 @@ export default async function handler(req, res) {
     const data = await readBacklogPayload();
     sendJson(res, 200, { data });
   } catch (error) {
-    sendJson(res, error?.statusCode || 500, { error: error instanceof Error ? error.message : 'Unknown server error' });
+    sendJson(res, error?.statusCode || 500, { error: formatBacklogError(error) });
   }
 }

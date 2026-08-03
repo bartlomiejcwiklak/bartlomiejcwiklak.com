@@ -17,6 +17,30 @@ export function sendJson(res, status, body) {
   res.status(status).json(body);
 }
 
+export async function readJsonBody(req) {
+  if (req.body && typeof req.body === 'object') {
+    return req.body;
+  }
+
+  const chunks = [];
+
+  for await (const chunk of req) {
+    chunks.push(chunk);
+  }
+
+  if (chunks.length === 0) {
+    return {};
+  }
+
+  const raw = Buffer.concat(chunks.map((chunk) => Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk))).toString('utf8');
+
+  if (!raw) {
+    return {};
+  }
+
+  return JSON.parse(raw);
+}
+
 export function handleOptions(req, res) {
   if (req.method !== 'OPTIONS') {
     return false;
@@ -112,4 +136,18 @@ export function assertPassword(password) {
     error.statusCode = 401;
     throw error;
   }
+}
+
+export function formatBacklogError(error) {
+  if (error && typeof error === 'object') {
+    if ('code' in error && error.code === '42P01') {
+      return 'Missing Supabase table: run supabase/backlog.sql in the Supabase SQL editor.';
+    }
+
+    if ('message' in error && typeof error.message === 'string') {
+      return error.message;
+    }
+  }
+
+  return error instanceof Error ? error.message : 'Unknown server error';
 }

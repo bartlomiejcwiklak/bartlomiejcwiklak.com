@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useState, type ChangeEvent } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Download, FileUp, Lock, PencilLine, Plus, Search, Shield, Trash2, Unlock } from 'lucide-react';
+import { ArrowLeft, Download, FileUp, Lock, PencilLine, Plus, Search, Shield, Trash2, Unlock, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { createEmptyPayload, formatDate, normalizePayload, slugify, statusOrder, type BacklogItem, type BacklogPayload, type BacklogStatus } from '../lib/backlog';
@@ -26,18 +26,7 @@ type DraftItem = {
   platforms: string;
   rating: string;
   rank: string;
-  addedAt: string;
-  startedAt: string;
-  finishedAt: string;
-  playtime: string;
-  timeToBeat: string;
   notes: string;
-  description: string;
-  coverUrl: string;
-  heroUrl: string;
-  releaseDate: string;
-  genres: string;
-  developers: string;
 };
 
 function draftFromItem(item?: BacklogItem): DraftItem {
@@ -48,45 +37,37 @@ function draftFromItem(item?: BacklogItem): DraftItem {
     platforms: item?.platforms.join(', ') || '',
     rating: item?.rating ? String(item.rating) : '',
     rank: item?.rank ? String(item.rank) : '',
-    addedAt: item?.addedAt || new Date().toISOString().slice(0, 10),
-    startedAt: item?.startedAt || '',
-    finishedAt: item?.finishedAt || '',
-    playtime: item?.playtime || '',
-    timeToBeat: item?.timeToBeat || '',
     notes: item?.notes || '',
-    description: item?.metadata.description || '',
-    coverUrl: item?.metadata.coverUrl || '',
-    heroUrl: item?.metadata.heroUrl || '',
-    releaseDate: item?.metadata.releaseDate || '',
-    genres: item?.metadata.genres?.join(', ') || '',
-    developers: item?.metadata.developers?.join(', ') || '',
   };
 }
 
-function itemFromDraft(draft: DraftItem, existing?: BacklogItem): BacklogItem {
-  const title = draft.title.trim();
-
+function mergeItemWithDraft(item: BacklogItem, draft: DraftItem): BacklogItem {
   return {
-    id: draft.id.trim() || slugify(title),
-    title,
+    ...item,
+    title: draft.title.trim(),
     status: draft.status,
     platforms: draft.platforms.split(',').map((value) => value.trim()).filter(Boolean),
     rating: draft.rating ? Number(draft.rating) : undefined,
     rank: draft.rank ? Number(draft.rank) : undefined,
-    addedAt: draft.addedAt || new Date().toISOString().slice(0, 10),
-    startedAt: draft.startedAt || undefined,
-    finishedAt: draft.finishedAt || undefined,
-    playtime: draft.playtime || undefined,
-    timeToBeat: draft.timeToBeat || undefined,
     notes: draft.notes.trim() || undefined,
+  };
+}
+
+function buildItemFromSearch(result: SearchResult, status: BacklogStatus, platforms: string): BacklogItem {
+  return {
+    id: slugify(result.title),
+    title: result.title,
+    status,
+    platforms: platforms.split(',').map((value) => value.trim()).filter(Boolean),
+    addedAt: new Date().toISOString().slice(0, 10),
     metadata: {
-      ...existing?.metadata,
-      description: draft.description.trim() || undefined,
-      coverUrl: draft.coverUrl.trim() || undefined,
-      heroUrl: draft.heroUrl.trim() || undefined,
-      releaseDate: draft.releaseDate.trim() || undefined,
-      genres: draft.genres.split(',').map((value) => value.trim()).filter(Boolean),
-      developers: draft.developers.split(',').map((value) => value.trim()).filter(Boolean),
+      description: result.description || undefined,
+      coverUrl: result.coverUrl || undefined,
+      heroUrl: result.heroUrl || undefined,
+      releaseDate: result.releaseDate || undefined,
+      genres: result.genres || [],
+      developers: result.developers || [],
+      source: result.source,
     },
   };
 }
@@ -108,7 +89,7 @@ const Backlog = () => {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const [payload, setPayload] = useState<BacklogPayload>(createEmptyPayload());
-  const [hasError, setHasError] = useState(false);
+  const [loadError, setLoadError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeStatus, setActiveStatus] = useState<'all' | BacklogStatus>('all');
   const [password, setPassword] = useState('');
@@ -121,6 +102,9 @@ const Backlog = () => {
   const [isSearchingCatalog, setIsSearchingCatalog] = useState(false);
   const [adminMessage, setAdminMessage] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [createStatus, setCreateStatus] = useState<BacklogStatus>('backlog');
+  const [createPlatforms, setCreatePlatforms] = useState('');
 
   usePageMeta({
     title: 'BACKLOG | Bartlomiej Cwiklak',
@@ -142,11 +126,11 @@ const Backlog = () => {
 
         if (active) {
           setPayload(remotePayload);
-          setHasError(false);
+          setLoadError('');
         }
-      } catch {
+      } catch (error) {
         if (active) {
-          setHasError(true);
+          setLoadError(error instanceof Error ? error.message : t('backlog.error'));
         }
       }
     };
@@ -156,7 +140,7 @@ const Backlog = () => {
     return () => {
       active = false;
     };
-  }, []);
+  }, [t]);
 
   const filteredItems = useMemo(() => {
     const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -188,56 +172,64 @@ const Backlog = () => {
     setPayload(normalizePayload(nextPayload));
   };
 
+  const closeCreateModal = () => {
+    setIsCreateOpen(false);
+    setCatalogQuery('');
+    setCatalogResults([]);
+    setCreateStatus('backlog');
+    setCreatePlatforms('');
+  };
+
   const handleUnlock = async () => {
     try {
       await verifyBacklogPassword(password);
       setIsUnlocked(true);
       setPasswordError('');
       setAdminMessage('');
-    } catch {
-      setPasswordError(t('backlog.invalidPassword'));
+    } catch (error) {
+      setPasswordError(error instanceof Error ? error.message : t('backlog.invalidPassword'));
     }
   };
 
   const handleLock = () => {
     setIsUnlocked(false);
     setPassword('');
-    setDraft(null);
+    setPasswordError('');
     setEditingId(null);
-    setCatalogResults([]);
-    setCatalogQuery('');
+    setDraft(null);
+    closeCreateModal();
   };
 
   const openNewEntry = () => {
     setEditingId(null);
-    setDraft(draftFromItem());
-    setCatalogQuery('');
-    setCatalogResults([]);
+    setDraft(null);
     setAdminMessage('');
+    setIsCreateOpen(true);
   };
 
   const openEditEntry = (item: BacklogItem) => {
+    setIsCreateOpen(false);
+    setCatalogResults([]);
+    setCatalogQuery('');
     setEditingId(item.id);
     setDraft(draftFromItem(item));
-    setCatalogQuery(item.title);
-    setCatalogResults([]);
     setAdminMessage('');
   };
 
   const handleSaveDraft = async () => {
-    if (!draft) {
+    if (!draft || !editingId) {
       return;
     }
 
-    const nextItem = itemFromDraft(draft, payload.items.find((item) => item.id === editingId));
+    const existingItem = payload.items.find((item) => item.id === editingId);
 
-    if (!nextItem.title) {
+    if (!existingItem) {
       return;
     }
 
     try {
       setIsSaving(true);
-      const nextPayload = await upsertBacklogItem(nextItem, password);
+      const nextPayload = await upsertBacklogItem(mergeItemWithDraft(existingItem, draft), password);
       savePayload(nextPayload);
       setDraft(null);
       setEditingId(null);
@@ -275,6 +267,7 @@ const Backlog = () => {
 
     try {
       setIsSearchingCatalog(true);
+      setAdminMessage('');
       const response = await fetch(`/api/backlog-search?query=${encodeURIComponent(query)}`);
       const data = await response.json() as { items?: SearchResult[]; error?: string };
 
@@ -290,22 +283,18 @@ const Backlog = () => {
     }
   };
 
-  const applyCatalogResult = (result: SearchResult) => {
-    if (!draft) {
-      return;
+  const handleQuickAdd = async (result: SearchResult) => {
+    try {
+      setIsSaving(true);
+      const nextPayload = await upsertBacklogItem(buildItemFromSearch(result, createStatus, createPlatforms), password);
+      savePayload(nextPayload);
+      closeCreateModal();
+      setAdminMessage(t('backlog.gameAdded'));
+    } catch (error) {
+      setAdminMessage(error instanceof Error ? error.message : 'Save failed');
+    } finally {
+      setIsSaving(false);
     }
-
-    setDraft({
-      ...draft,
-      id: draft.id || slugify(result.title),
-      title: result.title,
-      description: result.description || draft.description,
-      coverUrl: result.coverUrl || draft.coverUrl,
-      heroUrl: result.heroUrl || draft.heroUrl,
-      releaseDate: result.releaseDate || draft.releaseDate,
-      genres: result.genres?.join(', ') || draft.genres,
-      developers: result.developers?.join(', ') || draft.developers,
-    });
   };
 
   const handleExport = async () => {
@@ -354,6 +343,7 @@ const Backlog = () => {
       setDraft(null);
       setEditingId(null);
       setAdminMessage(t('backlog.refreshed'));
+      setLoadError('');
     } catch (error) {
       setAdminMessage(error instanceof Error ? error.message : 'Refresh failed');
     }
@@ -420,6 +410,7 @@ const Backlog = () => {
 
         {passwordError && !isUnlocked && <p className="mb-4 text-sm text-red-300">{passwordError}</p>}
         {adminMessage && <p className="mb-4 text-sm text-white/65">{adminMessage}</p>}
+        {loadError && <p className="mb-4 text-sm text-amber-200">{loadError}</p>}
 
         <div className="grid flex-1 gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
           <section className="overflow-hidden rounded-2xl border border-white/10 bg-black/20">
@@ -479,8 +470,7 @@ const Backlog = () => {
               </table>
             </div>
 
-            {hasError && <div className="px-4 py-8 text-sm text-white/50 md:px-6">{t('backlog.error')}</div>}
-            {!hasError && filteredItems.length === 0 && <div className="px-4 py-8 text-sm text-white/50 md:px-6">{t('backlog.empty')}</div>}
+            {!loadError && filteredItems.length === 0 && <div className="px-4 py-8 text-sm text-white/50 md:px-6">{t('backlog.empty')}</div>}
           </section>
 
           <aside className="rounded-2xl border border-white/10 bg-black/20">
@@ -507,37 +497,13 @@ const Backlog = () => {
                   {t('backlog.reset')}
                 </button>
                 <button type="button" onClick={openNewEntry} disabled={!isUnlocked || isSaving} className="rounded-xl bg-white px-4 py-3 text-sm font-medium text-black transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50">
-                  <span className="inline-flex items-center gap-2"><Plus size={16} /> {t('backlog.newEntry')}</span>
+                  <span className="inline-flex items-center gap-2"><Plus size={16} /> {t('backlog.addGame')}</span>
                 </button>
               </div>
 
               {isUnlocked && draft ? (
                 <div className="space-y-3 rounded-xl border border-white/10 p-4">
-                  <label className="grid gap-2 text-sm text-white/55">
-                    <span>{t('backlog.searchCatalog')}</span>
-                    <div className="flex gap-2">
-                      <input value={catalogQuery} onChange={(event) => setCatalogQuery(event.target.value)} className="w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-white outline-none" />
-                      <button type="button" onClick={() => void handleCatalogSearch()} disabled={isSaving || isSearchingCatalog} className="rounded-lg border border-white/10 px-3 py-2.5 text-sm text-white transition hover:bg-white/[0.05] disabled:opacity-50">
-                        {isSearchingCatalog ? '...' : t('backlog.autofill')}
-                      </button>
-                    </div>
-                  </label>
-
-                  {catalogResults.length > 0 && (
-                    <div className="max-h-56 space-y-2 overflow-auto rounded-lg border border-white/10 p-2">
-                      {catalogResults.map((result) => (
-                        <button key={result.id} type="button" onClick={() => applyCatalogResult(result)} className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition hover:bg-white/[0.04]">
-                          <div className="h-12 w-16 overflow-hidden rounded bg-white/[0.04]">
-                            {result.coverUrl ? <img src={result.coverUrl} alt={result.title} className="h-full w-full object-cover" /> : null}
-                          </div>
-                          <div>
-                            <div className="text-sm text-white">{result.title}</div>
-                            <div className="text-xs text-white/35">{formatDate(result.releaseDate, i18n.language) || result.source || ''}</div>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                  <div className="text-sm font-medium text-white">{t('backlog.editEntry')}</div>
 
                   <div className="grid gap-3 sm:grid-cols-2">
                     <input value={draft.title} onChange={(event) => setDraft({ ...draft, title: event.target.value })} placeholder={t('backlog.titleLabel')} className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-white outline-none" />
@@ -555,7 +521,7 @@ const Backlog = () => {
 
                   <div className="grid gap-3 sm:grid-cols-2">
                     <input value={draft.rank} onChange={(event) => setDraft({ ...draft, rank: event.target.value })} placeholder={t('backlog.rank')} className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-white outline-none" />
-                    <input value={draft.releaseDate} onChange={(event) => setDraft({ ...draft, releaseDate: event.target.value })} placeholder={t('backlog.releaseLabel')} className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-white outline-none" />
+                    <div className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-white/45">{editingId}</div>
                   </div>
 
                   <textarea value={draft.notes} onChange={(event) => setDraft({ ...draft, notes: event.target.value })} rows={4} placeholder={t('backlog.notesLabel')} className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-white outline-none" />
@@ -564,19 +530,78 @@ const Backlog = () => {
                     <button type="button" onClick={() => void handleSaveDraft()} disabled={isSaving} className="rounded-xl bg-white px-4 py-3 text-sm font-medium text-black transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50">
                       {isSaving ? t('backlog.saveInProgress') : t('backlog.save')}
                     </button>
-                    <button type="button" onClick={() => setDraft(null)} disabled={isSaving} className="rounded-xl border border-white/10 px-4 py-3 text-sm text-white/80 transition hover:bg-white/[0.05] disabled:opacity-50">
+                    <button type="button" onClick={() => { setDraft(null); setEditingId(null); }} disabled={isSaving} className="rounded-xl border border-white/10 px-4 py-3 text-sm text-white/80 transition hover:bg-white/[0.05] disabled:opacity-50">
                       {t('backlog.cancel')}
                     </button>
                   </div>
                 </div>
               ) : (
                 <div className="rounded-xl border border-dashed border-white/10 px-4 py-10 text-sm text-white/35">
-                  {isUnlocked ? t('backlog.newEntry') : t('backlog.unlock')}
+                  {isUnlocked ? t('backlog.editEntry') : t('backlog.unlock')}
                 </div>
               )}
             </div>
           </aside>
         </div>
+
+        {isCreateOpen && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+            <div className="w-full max-w-3xl rounded-2xl border border-white/10 bg-[#111214] shadow-2xl">
+              <div className="flex items-start justify-between gap-4 border-b border-white/10 px-5 py-5 md:px-6">
+                <div>
+                  <p className="text-[11px] uppercase tracking-[0.24em] text-white/35">{t('backlog.addGame')}</p>
+                  <h3 className="mt-1 text-2xl font-semibold text-white">{t('backlog.pickGame')}</h3>
+                </div>
+                <button type="button" onClick={closeCreateModal} className="rounded-lg border border-white/10 p-2 text-white/65 transition hover:text-white">
+                  <X size={18} />
+                </button>
+              </div>
+
+              <div className="space-y-4 px-5 py-5 md:px-6">
+                <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_180px_180px]">
+                  <label className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-white/45">
+                    <Search size={16} />
+                    <input value={catalogQuery} onChange={(event) => setCatalogQuery(event.target.value)} placeholder={t('backlog.searchCatalog')} className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/30" />
+                  </label>
+                  <select value={createStatus} onChange={(event) => setCreateStatus(event.target.value as BacklogStatus)} className="rounded-xl border border-white/10 bg-[#16171a] px-4 py-3 text-sm text-white outline-none">
+                    {statusOrder.map((status) => (
+                      <option key={status} value={status}>{t(`backlog.states.${status}`)}</option>
+                    ))}
+                  </select>
+                  <input value={createPlatforms} onChange={(event) => setCreatePlatforms(event.target.value)} placeholder={t('backlog.quickPlatforms')} className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white outline-none placeholder:text-white/30" />
+                </div>
+
+                <button type="button" onClick={() => void handleCatalogSearch()} disabled={isSaving || isSearchingCatalog} className="rounded-xl border border-white/10 px-4 py-3 text-sm text-white transition hover:bg-white/[0.05] disabled:opacity-50">
+                  {isSearchingCatalog ? '...' : t('backlog.autofill')}
+                </button>
+
+                <div className="max-h-[420px] space-y-2 overflow-auto rounded-xl border border-white/10 p-2">
+                  {catalogResults.map((result) => (
+                    <div key={result.id} className="flex items-center gap-4 rounded-xl px-3 py-3 transition hover:bg-white/[0.04]">
+                      <div className="h-16 w-24 shrink-0 overflow-hidden rounded-lg bg-white/[0.04]">
+                        {result.coverUrl ? <img src={result.coverUrl} alt={result.title} className="h-full w-full object-cover" /> : null}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-sm font-medium text-white">{result.title}</div>
+                        <div className="mt-1 text-xs text-white/35">{formatDate(result.releaseDate, i18n.language) || result.source || ''}</div>
+                        {result.description && <p className="mt-2 line-clamp-2 text-sm text-white/45">{result.description}</p>}
+                      </div>
+                      <div className="flex shrink-0 gap-2">
+                        <button type="button" onClick={() => void handleQuickAdd(result)} disabled={isSaving} className="rounded-lg bg-white px-3 py-2 text-sm font-medium text-black transition hover:bg-white/90 disabled:opacity-50">
+                          {t('backlog.addGame')}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+
+                  {catalogQuery && !isSearchingCatalog && catalogResults.length === 0 && (
+                    <div className="px-3 py-8 text-sm text-white/40">{t('backlog.noResults')}</div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </motion.div>
   );

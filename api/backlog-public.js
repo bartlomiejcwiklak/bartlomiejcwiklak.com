@@ -1,4 +1,4 @@
-import { handleOptions, readBacklogPayload, sendJson } from './_backlog.js';
+import { formatBacklogError, handleOptions, readBacklogPayload, sendJson } from './_backlog.js';
 
 export default async function handler(req, res) {
   if (handleOptions(req, res)) {
@@ -14,6 +14,6 @@ export default async function handler(req, res) {
     const data = await readBacklogPayload();
     sendJson(res, 200, { data });
   } catch (error) {
-    sendJson(res, 500, { error: error instanceof Error ? error.message : 'Unknown server error' });
+    sendJson(res, 500, { error: formatBacklogError(error) });
   }
 }
