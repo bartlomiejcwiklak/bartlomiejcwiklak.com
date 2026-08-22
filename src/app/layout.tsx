@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { DM_Sans, Roboto_Mono } from 'next/font/google';
+import { ContactOverlay, ContactOverlayProvider } from '@/components/contact/contact-overlay';
 import { PageTransition } from '@/components/navigation/page-transition';
 import { ProjectReturnTransition } from '@/components/project/project-return-transition';
 import './globals.css';
@@ -62,9 +63,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${dmSans.variable} ${robotoMono.variable} bg-ash font-sans text-ink antialiased`}>
-        {children}
-        <ProjectReturnTransition />
-        <PageTransition />
+        <ContactOverlayProvider>
+          {children}
+          <ContactOverlay />
+          <ProjectReturnTransition />
+          <PageTransition />
+        </ContactOverlayProvider>
       </body>
     </html>
   );

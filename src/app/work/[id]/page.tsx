@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { ContactButton } from '@/components/contact/contact-overlay';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { ProjectMedia } from '@/components/media/project-media';
 import { ProjectBackLink, ProjectBackLogo } from '@/components/project/project-back-link';
@@ -61,12 +62,11 @@ export default function ProjectPage({ params }: ProjectPageProps) {
         <div className="flex items-center justify-between gap-4 px-4 py-4 md:grid md:grid-cols-[auto_1fr_auto] md:px-6">
           <ProjectBackLogo project={project} />
 
-          <a
-            href="mailto:contact@bartlomiejcwiklak.com"
+          <ContactButton
             className="inline-flex min-h-10 items-center rounded-full bg-ash px-5 font-mono text-[0.68rem] uppercase tracking-[0.24em] text-ink transition hover:opacity-70 md:hidden"
           >
             Contact
-          </a>
+          </ContactButton>
 
           <div className="hidden translate-x-36 justify-self-center gap-12 font-mono text-[0.56rem] font-semibold uppercase leading-[1.35] tracking-[0.28em] text-ash/82 md:flex lg:translate-x-44">
             <div>
@@ -77,12 +77,11 @@ export default function ProjectPage({ params }: ProjectPageProps) {
           </div>
 
           <div className="hidden items-center gap-5 md:flex md:justify-self-end">
-            <a
-              href="mailto:contact@bartlomiejcwiklak.com"
+            <ContactButton
               className="inline-flex min-h-10 items-center rounded-full bg-ash px-5 font-mono text-[0.68rem] uppercase tracking-[0.24em] text-ink transition hover:opacity-70"
             >
               Contact
-            </a>
+            </ContactButton>
           </div>
         </div>
       </header>
