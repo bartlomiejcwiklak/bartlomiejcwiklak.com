@@ -382,14 +382,13 @@ export default function HomePage() {
 
           <button
             type="button"
-            aria-label="Open menu"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line/35 bg-white/[0.04] md:hidden"
+            onClick={() => {
+              stopAnimation();
+              setIsContactOpen(true);
+            }}
+            className="inline-flex min-h-10 items-center rounded-full bg-ash px-5 font-mono text-[0.68rem] uppercase tracking-[0.24em] text-ink transition hover:opacity-70 md:hidden"
           >
-            <span className="flex w-4 flex-col gap-[3px]">
-              <span className="block h-px w-full bg-ash" />
-              <span className="block h-px w-full bg-ash" />
-              <span className="block h-px w-full bg-ash" />
-            </span>
+            Contact
           </button>
 
           <div className="hidden translate-x-36 justify-self-center gap-12 font-mono text-[0.56rem] font-semibold uppercase leading-[1.35] tracking-[0.28em] text-ash/82 md:flex lg:translate-x-44">
@@ -480,17 +479,6 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-black/20" />
         </div>
       )}
-
-      <button
-        type="button"
-        onClick={() => {
-          stopAnimation();
-          setIsContactOpen(true);
-        }}
-        className="absolute bottom-[calc(env(safe-area-inset-bottom)+3.5rem)] left-1/2 z-20 inline-flex -translate-x-1/2 items-center rounded-full bg-ash px-5 py-3 font-mono text-[0.68rem] uppercase tracking-[0.24em] text-ink transition hover:opacity-70 md:hidden"
-      >
-        Contact
-      </button>
 
       <div
         className={`absolute inset-0 z-30 flex items-center justify-center bg-black/0 px-4 transition-all duration-500 ${
