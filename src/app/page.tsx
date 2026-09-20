@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useContactOverlay } from '@/components/contact/contact-overlay';
 import { LanguageSwitcher, MobileMenu } from '@/components/i18n/language-switcher';
@@ -14,14 +13,6 @@ const SCROLL_EASING = 0.11;
 const SCROLL_STOP_THRESHOLD = 0.05;
 const TOUCH_SCROLL_MULTIPLIER = 1.2;
 const AUTO_SCROLL_SPEED = 0.018;
-const PROJECT_TRANSITION_DURATION = 500;
-
-type ActiveProjectTransition = {
-  project: (typeof projects)[number];
-  rect: DOMRect;
-  expanded: boolean;
-};
-
 function getGreatestCommonDivisor(a: number, b: number): number {
   let x = a;
   let y = b;
@@ -98,7 +89,6 @@ function ProjectCard({
 }
 
 export default function HomePage() {
-  const router = useRouter();
   const { isContactOpen, openContact } = useContactOverlay();
   const { t } = useLanguage();
   const segmentRef = useRef<HTMLDivElement>(null);
@@ -113,7 +103,6 @@ export default function HomePage() {
   const segmentHeightRef = useRef(0);
   const isContactOpenRef = useRef(false);
   const [columnCount, setColumnCount] = useState(5);
-  const [activeProjectTransition, setActiveProjectTransition] = useState<ActiveProjectTransition | null>(null);
 
   const applyTrackTransform = () => {
     const segmentHeight = segmentHeightRef.current;
@@ -280,7 +269,7 @@ export default function HomePage() {
   }, [isContactOpen]);
 
   const nudge = (delta: number) => {
-    if (isContactOpen || activeProjectTransition) {
+    if (isContactOpen || isProjectOpeningRef.current) {
       return;
     }
 
@@ -289,7 +278,7 @@ export default function HomePage() {
   };
 
   const openProject = (project: (typeof projects)[number], element: HTMLElement) => {
-    if (activeProjectTransition) {
+    if (isProjectOpeningRef.current) {
       return;
     }
 
@@ -313,15 +302,22 @@ export default function HomePage() {
       })
     );
 
-    setActiveProjectTransition({ project, rect, expanded: false });
-
-    window.requestAnimationFrame(() => {
-      setActiveProjectTransition({ project, rect, expanded: true });
-    });
-
-    window.setTimeout(() => {
-      router.push(href);
-    }, PROJECT_TRANSITION_DURATION - 60);
+    window.dispatchEvent(
+      new CustomEvent('project-open-transition', {
+        detail: {
+          id: project.id,
+          title: project.title,
+          imageUrl: project.imageUrl,
+          mediaType: project.mediaType,
+          posterUrl: project.posterUrl,
+          left: rect.left,
+          top: rect.top,
+          width: rect.width,
+          height: rect.height,
+          href
+        }
+      })
+    );
   };
 
   return (
@@ -398,31 +394,6 @@ export default function HomePage() {
           ))}
         </div>
       </div>
-
-      {activeProjectTransition && (
-        <div
-          className="pointer-events-none fixed z-40 overflow-hidden bg-ink transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]"
-          style={{
-            left: activeProjectTransition.expanded ? 0 : activeProjectTransition.rect.left,
-            top: activeProjectTransition.expanded ? 0 : activeProjectTransition.rect.top,
-            width: activeProjectTransition.expanded ? '100vw' : activeProjectTransition.rect.width,
-            height: activeProjectTransition.expanded ? '100vh' : activeProjectTransition.rect.height
-          }}
-        >
-          <ProjectMedia
-            src={activeProjectTransition.project.imageUrl}
-            alt={activeProjectTransition.project.title}
-            mediaType={activeProjectTransition.project.mediaType}
-            posterUrl={activeProjectTransition.project.posterUrl}
-            sizes="100vw"
-            className={`h-full w-full object-cover brightness-75 transition duration-500 ${
-              activeProjectTransition.expanded ? 'opacity-0' : 'opacity-100'
-            }`}
-            priority
-          />
-          <div className="absolute inset-0 bg-black/20" />
-        </div>
-      )}
 
     </main>
   );

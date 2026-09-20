@@ -1,10 +1,7 @@
 'use client';
 
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { LanguageSwitcher } from '@/components/i18n/language-switcher';
-import { useLanguage } from '@/components/i18n/language';
 import { ProjectMedia } from '@/components/media/project-media';
 
 export type ProjectReturnTransitionDetail = {
@@ -21,10 +18,10 @@ export type ProjectReturnTransitionDetail = {
 
 type ReturnTransition = {
   origin: ProjectReturnTransitionDetail;
-  collapsing: boolean;
+  phase: 'origin' | 'expanded' | 'collapsing' | 'revealing';
 };
 
-const RETURN_TRANSITION_DURATION = 500;
+const TRANSITION_DURATION = 520;
 
 function getVisibleTarget(origin: ProjectReturnTransitionDetail) {
   const matchingCards = Array.from(document.querySelectorAll<HTMLElement>(`[data-project-id="${origin.id}"]`));
@@ -47,11 +44,35 @@ function getVisibleTarget(origin: ProjectReturnTransitionDetail) {
 
 export function ProjectReturnTransition() {
   const router = useRouter();
-  const { t } = useLanguage();
   const [transition, setTransition] = useState<ReturnTransition | null>(null);
   const isRunningRef = useRef(false);
 
   useEffect(() => {
+    const finish = () => {
+      setTransition(null);
+      isRunningRef.current = false;
+      document.body.classList.remove('project-return-active');
+    };
+
+    const handleOpen = (event: Event) => {
+      if (isRunningRef.current) {
+        return;
+      }
+
+      const detail = (event as CustomEvent<ProjectReturnTransitionDetail & { href: string }>).detail;
+
+      isRunningRef.current = true;
+      setTransition({ origin: detail, phase: 'origin' });
+
+      window.requestAnimationFrame(() => {
+        setTransition({ origin: detail, phase: 'expanded' });
+      });
+
+      window.setTimeout(() => router.push(detail.href), TRANSITION_DURATION - 60);
+      window.setTimeout(() => setTransition((current) => current ? { ...current, phase: 'revealing' } : null), TRANSITION_DURATION + 60);
+      window.setTimeout(finish, TRANSITION_DURATION + 420);
+    };
+
     const handleReturn = (event: Event) => {
       if (isRunningRef.current) {
         return;
@@ -61,25 +82,29 @@ export function ProjectReturnTransition() {
 
       isRunningRef.current = true;
       document.body.classList.add('project-return-active');
-      setTransition({ origin, collapsing: false });
+      setTransition({ origin, phase: 'expanded' });
       router.push('/');
 
-      window.setTimeout(() => {
-        const target = getVisibleTarget(origin);
+      const findTarget = (attempt = 0) => {
+        const matchingCard = getVisibleTarget(origin);
 
-        setTransition({ origin: target, collapsing: true });
-      }, 90);
+        if (matchingCard !== origin || attempt >= 45) {
+          setTransition({ origin: matchingCard, phase: 'collapsing' });
+          window.setTimeout(finish, TRANSITION_DURATION + 40);
+          return;
+        }
 
-      window.setTimeout(() => {
-        setTransition(null);
-        isRunningRef.current = false;
-        document.body.classList.remove('project-return-active');
-      }, RETURN_TRANSITION_DURATION + 120);
+        window.requestAnimationFrame(() => findTarget(attempt + 1));
+      };
+
+      window.requestAnimationFrame(() => findTarget());
     };
 
+    window.addEventListener('project-open-transition', handleOpen);
     window.addEventListener('project-return-transition', handleReturn);
 
     return () => {
+      window.removeEventListener('project-open-transition', handleOpen);
       window.removeEventListener('project-return-transition', handleReturn);
     };
   }, [router]);
@@ -91,12 +116,14 @@ export function ProjectReturnTransition() {
   return (
     <>
       <div
-        className="pointer-events-none fixed z-40 overflow-hidden bg-ink transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]"
+        className={`pointer-events-none fixed z-[100] overflow-hidden bg-ink transition-all duration-[520ms] ease-[cubic-bezier(0.76,0,0.24,1)] ${
+          transition.phase === 'revealing' ? 'opacity-0 duration-[360ms]' : 'opacity-100'
+        }`}
         style={{
-          left: transition.collapsing ? transition.origin.left : 0,
-          top: transition.collapsing ? transition.origin.top : 0,
-          width: transition.collapsing ? transition.origin.width : '100vw',
-          height: transition.collapsing ? transition.origin.height : '100vh'
+          left: transition.phase === 'origin' || transition.phase === 'collapsing' ? transition.origin.left : 0,
+          top: transition.phase === 'origin' || transition.phase === 'collapsing' ? transition.origin.top : 0,
+          width: transition.phase === 'origin' || transition.phase === 'collapsing' ? transition.origin.width : '100vw',
+          height: transition.phase === 'origin' || transition.phase === 'collapsing' ? transition.origin.height : '100vh'
         }}
       >
         <ProjectMedia
@@ -105,34 +132,11 @@ export function ProjectReturnTransition() {
           mediaType={transition.origin.mediaType}
           posterUrl={transition.origin.posterUrl}
           sizes="100vw"
-          className={`h-full w-full object-cover brightness-75 transition duration-500 ${transition.collapsing ? 'opacity-100' : 'opacity-0'}`}
+          className="h-full w-full object-cover brightness-75"
           priority
         />
         <div className="absolute inset-0 bg-black/20" />
       </div>
-
-      <header className="pointer-events-none fixed inset-x-0 top-0 z-[90] bg-[#0b0b0b]/16 text-[#f3f1e8] backdrop-blur-sm">
-        <div className="flex items-center justify-between gap-4 px-4 py-4 md:grid md:grid-cols-[auto_1fr_auto] md:px-6">
-          <div className="flex min-h-10 items-center">
-            <Image src="/images/LOGOnowe.png" alt="Logo" width={160} height={104} className="h-11 w-auto object-contain md:h-12" priority />
-          </div>
-
-          <div className="hidden translate-x-36 justify-self-center gap-12 font-mono text-[0.56rem] font-semibold uppercase leading-[1.35] tracking-[0.28em] text-ash/82 md:flex lg:translate-x-44">
-            <div>
-              <span className="block text-left">{t('graphicDesigner')}</span>
-              <span className="mt-1 block text-left">{t('webDeveloper')}</span>
-            </div>
-            <span className="translate-x-4 self-start whitespace-nowrap text-left">{t('location')}</span>
-          </div>
-
-          <div className="hidden items-center gap-5 md:flex md:justify-self-end">
-            <LanguageSwitcher />
-            <div className="inline-flex min-h-10 items-center rounded-full bg-ash px-5 font-mono text-[0.68rem] uppercase tracking-[0.24em] text-ink">
-              {t('contact')}
-            </div>
-          </div>
-        </div>
-      </header>
     </>
   );
 }
