@@ -1,33 +1,20 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useLanguage, type Language } from '@/components/i18n/language';
 import type { ContentBlock, Project } from '@/data/projects';
 
-type Language = 'en' | 'pl';
-
-function getPreferredLanguage(): Language {
-  const languages = navigator.languages?.length ? navigator.languages : [navigator.language];
-  const preferred = languages.find((language) => {
-    const normalizedLanguage = language.toLowerCase();
-
-    return normalizedLanguage === 'pl' || normalizedLanguage.startsWith('pl-') || normalizedLanguage === 'en' || normalizedLanguage.startsWith('en-');
-  });
-
-  return preferred?.toLowerCase().startsWith('pl') ? 'pl' : 'en';
-}
-
-function getTextBlocks(content: ContentBlock[] | undefined, description: string) {
+function getTextBlocks(content: ContentBlock[] | undefined, description: string, fallbackDetails: string) {
   const blocks = content?.filter((block): block is Extract<ContentBlock, { type: 'text' }> => block.type === 'text') ?? [];
 
   if (blocks.length) {
     return blocks.map((block) => block.value);
   }
 
-  return [description, 'More case study details, process notes and production context will be added as this project archive grows.'];
+  return [description, fallbackDetails];
 }
 
-function getImageBlocks(content: ContentBlock[] | undefined, fallbackImage: string) {
+function getImageBlocks(content: ContentBlock[] | undefined, fallbackImage: string, fallbackCaption: string) {
   const images =
     content?.flatMap((block) => {
       if (block.type === 'image') {
@@ -47,7 +34,7 @@ function getImageBlocks(content: ContentBlock[] | undefined, fallbackImage: stri
 
   return [{
     url: fallbackImage,
-    caption: 'Project visual archive'
+    caption: fallbackCaption
   }];
 }
 
@@ -64,14 +51,10 @@ function getLocalizedProject(project: Project, language: Language) {
 }
 
 export function LocalizedProjectDetails({ project }: { project: Project }) {
-  const [language, setLanguage] = useState<Language>('en');
+  const { language, t } = useLanguage();
   const localizedProject = getLocalizedProject(project, language);
-  const textBlocks = getTextBlocks(localizedProject.content, localizedProject.description);
-  const imageBlocks = getImageBlocks(localizedProject.content, localizedProject.imageUrl);
-
-  useEffect(() => {
-    setLanguage(getPreferredLanguage());
-  }, []);
+  const textBlocks = getTextBlocks(localizedProject.content, localizedProject.description, t('fallbackDetails'));
+  const imageBlocks = getImageBlocks(localizedProject.content, localizedProject.imageUrl, t('projectVisualArchive'));
 
   return (
     <>

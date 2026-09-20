@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
+import { useLanguage } from '@/components/i18n/language';
 
 type ProjectBackLinkProps = {
   children: ReactNode;
@@ -92,8 +93,10 @@ export function ProjectBackLink({ children, className, ariaLabel, project, varia
 }
 
 export function ProjectBackLogo({ project }: { project: ProjectBackLinkProps['project'] }) {
+  const { t } = useLanguage();
+
   return (
-    <ProjectBackLink project={project} variant="logo" className="flex min-h-10 items-center" ariaLabel="Back to portfolio">
+    <ProjectBackLink project={project} variant="logo" className="flex min-h-10 items-center" ariaLabel={t('backToPortfolio')}>
       <Image src="/images/LOGOnowe.png" alt="Logo" width={160} height={104} className="h-11 w-auto object-contain md:h-12" priority />
     </ProjectBackLink>
   );

@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useContactOverlay } from '@/components/contact/contact-overlay';
+import { LanguageSwitcher, MobileMenu } from '@/components/i18n/language-switcher';
+import { useLanguage } from '@/components/i18n/language';
 import { ProjectMedia } from '@/components/media/project-media';
 import { projects } from '@/data/projects';
 
@@ -98,6 +100,7 @@ function ProjectCard({
 export default function HomePage() {
   const router = useRouter();
   const { isContactOpen, openContact } = useContactOverlay();
+  const { t } = useLanguage();
   const segmentRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | null>(null);
@@ -329,26 +332,18 @@ export default function HomePage() {
             <Image src="/images/LOGOnowe.png" alt="Logo" width={160} height={104} className="h-11 w-auto object-contain md:h-12" priority />
           </div>
 
-          <button
-            type="button"
-            onClick={() => {
-              stopAnimation();
-              openContact();
-            }}
-            className="inline-flex min-h-10 items-center rounded-full bg-ash px-5 font-mono text-[0.68rem] uppercase tracking-[0.24em] text-ink transition hover:opacity-70 md:hidden"
-          >
-            Contact
-          </button>
+          <MobileMenu onBeforeContact={stopAnimation} />
 
           <div className="hidden translate-x-36 justify-self-center gap-12 font-mono text-[0.56rem] font-semibold uppercase leading-[1.35] tracking-[0.28em] text-ash/82 md:flex lg:translate-x-44">
             <div>
-              <span className="block text-left">Graphic Designer</span>
-              <span className="mt-1 block text-left">& Web Developer</span>
+              <span className="block text-left">{t('graphicDesigner')}</span>
+              <span className="mt-1 block text-left">{t('webDeveloper')}</span>
             </div>
-            <span className="translate-x-4 self-start whitespace-nowrap text-left">Lodz, Poland</span>
+            <span className="translate-x-4 self-start whitespace-nowrap text-left">{t('location')}</span>
           </div>
 
           <div className="hidden items-center gap-5 md:flex md:justify-self-end">
+            <LanguageSwitcher />
             <button
               type="button"
               onClick={() => {
@@ -357,7 +352,7 @@ export default function HomePage() {
               }}
               className="inline-flex min-h-10 items-center rounded-full bg-ash px-5 font-mono text-[0.68rem] uppercase tracking-[0.24em] text-ink transition hover:opacity-70"
             >
-              Contact
+              {t('contact')}
             </button>
           </div>
         </div>

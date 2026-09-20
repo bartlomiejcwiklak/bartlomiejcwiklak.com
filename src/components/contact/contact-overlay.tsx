@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { useLanguage } from '@/components/i18n/language';
 
 type ContactOverlayContextValue = {
   isContactOpen: boolean;
@@ -71,16 +72,18 @@ export function useContactOverlay() {
 
 export function ContactButton({ children = 'Contact', className }: { children?: ReactNode; className?: string }) {
   const { openContact } = useContactOverlay();
+  const { t } = useLanguage();
 
   return (
     <button type="button" onClick={openContact} className={className}>
-      {children}
+      {children === 'Contact' ? t('contact') : children}
     </button>
   );
 }
 
 export function ContactOverlay() {
   const { isContactOpen, closeContact } = useContactOverlay();
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (!isContactOpen) {
@@ -118,16 +121,16 @@ export function ContactOverlay() {
         <div className="mb-8 flex items-start justify-between gap-6 px-4 md:px-6">
           <div className="max-w-2xl text-left">
             <p className="font-mono text-[0.68rem] uppercase tracking-[0.28em] text-ash/64">
-              Contact
+              {t('contact')}
             </p>
             <h2 className="mt-4 text-2xl font-medium leading-tight text-ash md:text-4xl">
-              Thanks for reaching out!
+              {t('contactHeading')}
             </h2>
           </div>
 
           <button
             type="button"
-            aria-label="Close contact overlay"
+            aria-label={t('close')}
             onClick={closeContact}
             className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line/35 bg-white/[0.04] font-mono text-lg text-ash transition hover:bg-white/[0.1]"
           >
@@ -147,13 +150,13 @@ export function ContactOverlay() {
         </div>
 
         <div className="grid grid-cols-2 px-4 sm:grid-cols-3 md:px-6 lg:grid-cols-4 xl:grid-cols-5">
-          <ContactCard href="mailto:contact@bartlomiejcwiklak.com" label="Option 01" title="Send an email" />
+          <ContactCard href="mailto:contact@bartlomiejcwiklak.com" label={t('option01')} title={t('contactEmail')} />
 
           <ContactCard
             href="https://calendly.com/bartlomiej-cwiklak/private-call"
             external
-            label="Option 02"
-            title="Book a phone call"
+            label={t('option02')}
+            title={t('contactCall')}
           />
         </div>
       </div>

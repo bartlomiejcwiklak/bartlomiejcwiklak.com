@@ -3,6 +3,8 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { LanguageSwitcher } from '@/components/i18n/language-switcher';
+import { useLanguage } from '@/components/i18n/language';
 import { ProjectMedia } from '@/components/media/project-media';
 
 export type ProjectReturnTransitionDetail = {
@@ -45,6 +47,7 @@ function getVisibleTarget(origin: ProjectReturnTransitionDetail) {
 
 export function ProjectReturnTransition() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [transition, setTransition] = useState<ReturnTransition | null>(null);
   const isRunningRef = useRef(false);
 
@@ -116,15 +119,16 @@ export function ProjectReturnTransition() {
 
           <div className="hidden translate-x-36 justify-self-center gap-12 font-mono text-[0.56rem] font-semibold uppercase leading-[1.35] tracking-[0.28em] text-ash/82 md:flex lg:translate-x-44">
             <div>
-              <span className="block text-left">Graphic Designer</span>
-              <span className="mt-1 block text-left">& Web Developer</span>
+              <span className="block text-left">{t('graphicDesigner')}</span>
+              <span className="mt-1 block text-left">{t('webDeveloper')}</span>
             </div>
-            <span className="translate-x-4 self-start whitespace-nowrap text-left">Lodz, Poland</span>
+            <span className="translate-x-4 self-start whitespace-nowrap text-left">{t('location')}</span>
           </div>
 
-          <div className="hidden md:justify-self-end md:block">
+          <div className="hidden items-center gap-5 md:flex md:justify-self-end">
+            <LanguageSwitcher />
             <div className="inline-flex min-h-10 items-center rounded-full bg-ash px-5 font-mono text-[0.68rem] uppercase tracking-[0.24em] text-ink">
-              Contact
+              {t('contact')}
             </div>
           </div>
         </div>

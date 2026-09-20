@@ -1,4 +1,7 @@
+'use client';
+
 import Image from 'next/image';
+import { useLanguage } from '@/components/i18n/language';
 import { PageTransitionLink } from '@/components/navigation/page-transition';
 import { ProjectBackLink } from '@/components/project/project-back-link';
 
@@ -13,6 +16,8 @@ type SiteFooterProps = {
 };
 
 export function SiteFooter({ project }: SiteFooterProps) {
+  const { t } = useLanguage();
+
   return (
     <footer className="bg-ink px-4 py-20 md:px-6 md:py-28">
       <div className="mx-auto grid max-w-7xl gap-14">
@@ -49,22 +54,22 @@ export function SiteFooter({ project }: SiteFooterProps) {
 
         {project ? (
           <ProjectBackLink project={project} className="w-fit text-left text-[clamp(3rem,10vw,9rem)] font-bold uppercase leading-[0.86] tracking-[-0.07em] text-ash transition hover:opacity-70">
-            <span>Back to Work</span>
+            <span>{t('backToWork')}</span>
           </ProjectBackLink>
         ) : (
           <PageTransitionLink href="/" className="w-fit text-left text-[clamp(3rem,10vw,9rem)] font-bold uppercase leading-[0.86] tracking-[-0.07em] text-ash transition hover:opacity-70">
-            <span>Back to Work</span>
+            <span>{t('backToWork')}</span>
           </PageTransitionLink>
         )}
 
         <div className="flex flex-wrap items-center justify-between gap-x-5 gap-y-3 font-mono text-[0.62rem] uppercase tracking-[0.24em] text-ash/50">
-          <p>© 2026 Bartlomiej Cwiklak. All rights reserved.</p>
+          <p>© 2026 Bartlomiej Cwiklak. {t('allRightsReserved')}</p>
           <div className="ml-auto flex gap-5 text-ash">
             <PageTransitionLink href="/privacy-policy" className="underline underline-offset-4 transition hover:opacity-70">
-              Privacy Policy
+              {t('privacyPolicy')}
             </PageTransitionLink>
             <PageTransitionLink href="/ai-policy" className="underline underline-offset-4 transition hover:opacity-70">
-              AI Policy
+              {t('aiPolicy')}
             </PageTransitionLink>
           </div>
         </div>

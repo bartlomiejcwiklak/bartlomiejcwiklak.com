@@ -1,10 +1,13 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { ContactButton } from '@/components/contact/contact-overlay';
+import { LocalizedText } from '@/components/i18n/language';
+import { LanguageSwitcher, MobileMenu } from '@/components/i18n/language-switcher';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { ProjectMedia } from '@/components/media/project-media';
-import { ProjectBackLink, ProjectBackLogo } from '@/components/project/project-back-link';
+import { ProjectBackLogo } from '@/components/project/project-back-link';
 import { LocalizedProjectDetails } from '@/components/project/localized-project-details';
+import { ProjectTags } from '@/components/project/project-tags';
 import { projects } from '@/data/projects';
 
 type ProjectPageProps = {
@@ -62,26 +65,21 @@ export default function ProjectPage({ params }: ProjectPageProps) {
         <div className="flex items-center justify-between gap-4 px-4 py-4 md:grid md:grid-cols-[auto_1fr_auto] md:px-6">
           <ProjectBackLogo project={project} />
 
-          <ContactButton
-            className="inline-flex min-h-10 items-center rounded-full bg-ash px-5 font-mono text-[0.68rem] uppercase tracking-[0.24em] text-ink transition hover:opacity-70 md:hidden"
-          >
-            Contact
-          </ContactButton>
+          <MobileMenu />
 
           <div className="hidden translate-x-36 justify-self-center gap-12 font-mono text-[0.56rem] font-semibold uppercase leading-[1.35] tracking-[0.28em] text-ash/82 md:flex lg:translate-x-44">
             <div>
-              <span className="block text-left">Graphic Designer</span>
-              <span className="mt-1 block text-left">& Web Developer</span>
+              <span className="block text-left"><LocalizedText translationKey="graphicDesigner" /></span>
+              <span className="mt-1 block text-left"><LocalizedText translationKey="webDeveloper" /></span>
             </div>
-            <span className="translate-x-4 self-start whitespace-nowrap text-left">Lodz, Poland</span>
+            <span className="translate-x-4 self-start whitespace-nowrap text-left"><LocalizedText translationKey="location" /></span>
           </div>
 
           <div className="hidden items-center gap-5 md:flex md:justify-self-end">
+            <LanguageSwitcher />
             <ContactButton
               className="inline-flex min-h-10 items-center rounded-full bg-ash px-5 font-mono text-[0.68rem] uppercase tracking-[0.24em] text-ink transition hover:opacity-70"
-            >
-              Contact
-            </ContactButton>
+            />
           </div>
         </div>
       </header>
@@ -92,16 +90,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
             {project.title}
           </h1>
 
-          <div className="mt-7 flex flex-wrap justify-center gap-2 md:mt-10">
-            {tags.map((tag) => (
-              <span
-                key={tag}
-                className="rounded-full border border-line/35 px-4 py-2 font-mono text-[0.62rem] uppercase tracking-[0.24em] text-ash/78"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
+          <ProjectTags tags={tags} />
         </div>
       </section>
 
