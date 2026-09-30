@@ -13,6 +13,8 @@ const SCROLL_EASING = 0.11;
 const SCROLL_STOP_THRESHOLD = 0.05;
 const TOUCH_SCROLL_MULTIPLIER = 1.2;
 const AUTO_SCROLL_SPEED = 0.018;
+const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
+
 function getGreatestCommonDivisor(a: number, b: number): number {
   let x = a;
   let y = b;
@@ -40,6 +42,34 @@ function getColumnCount(width: number) {
   }
 
   return 2;
+}
+
+// Each looped segment must be at least as tall as the viewport, otherwise a gap shows at the loop seam.
+function getMinRowCount(width: number, height: number, columnCount: number) {
+  const cardSize = width / columnCount;
+
+  return Math.ceil(height / cardSize) + 1;
+}
+
+// Fills the segment cyclically with projects. The row count is picked so that cards meeting across the
+// segment seam are never the same project directly above or diagonally next to each other.
+function getSegmentProjects(columnCount: number, minRowCount: number) {
+  const projectCount = projects.length;
+  const startRows = Math.max(minRowCount, Math.ceil(projectCount / columnCount));
+  let rowCount = (columnCount / getGreatestCommonDivisor(projectCount, columnCount)) * projectCount / columnCount;
+
+  for (let rows = startRows; rows < startRows + projectCount; rows += 1) {
+    const seamShift = (((columnCount - rows * columnCount) % projectCount) + projectCount) % projectCount;
+
+    if (seamShift > 1 && seamShift < projectCount - 1) {
+      rowCount = rows;
+      break;
+    }
+  }
+
+  rowCount = Math.max(rowCount, minRowCount);
+
+  return Array.from({ length: rowCount * columnCount }, (_, index) => projects[index % projectCount]);
 }
 
 function ProjectCard({
@@ -102,7 +132,9 @@ export default function HomePage() {
   const targetOffsetRef = useRef(0);
   const segmentHeightRef = useRef(0);
   const isContactOpenRef = useRef(false);
+  const prefersReducedMotionRef = useRef(false);
   const [columnCount, setColumnCount] = useState(5);
+  const [minRowCount, setMinRowCount] = useState(0);
 
   const applyTrackTransform = () => {
     const segmentHeight = segmentHeightRef.current;
@@ -138,13 +170,23 @@ export default function HomePage() {
     const elapsed = Math.min(timestamp - previousTimestamp, 64);
 
     lastFrameTimeRef.current = timestamp;
-    targetOffsetRef.current += elapsed * AUTO_SCROLL_SPEED;
+
+    if (!prefersReducedMotionRef.current) {
+      targetOffsetRef.current += elapsed * AUTO_SCROLL_SPEED;
+    }
 
     const delta = targetOffsetRef.current - currentOffsetRef.current;
     currentOffsetRef.current += delta * SCROLL_EASING;
 
     if (Math.abs(delta) < SCROLL_STOP_THRESHOLD) {
       currentOffsetRef.current = targetOffsetRef.current;
+
+      // Without auto-scroll there is nothing left to animate once the user's scroll has settled.
+      if (prefersReducedMotionRef.current) {
+        applyTrackTransform();
+        stopAnimation();
+        return;
+      }
     }
 
     applyTrackTransform();
@@ -161,12 +203,7 @@ export default function HomePage() {
     animationFrameRef.current = window.requestAnimationFrame(animate);
   };
 
-  const segmentProjects = useMemo(() => {
-    const divisor = getGreatestCommonDivisor(projects.length, columnCount);
-    const repeatCount = columnCount / divisor;
-
-    return Array.from({ length: repeatCount }, () => projects).flat();
-  }, [columnCount]);
+  const segmentProjects = useMemo(() => getSegmentProjects(columnCount, minRowCount), [columnCount, minRowCount]);
 
   const loopedProjects = useMemo(() => Array.from({ length: 3 }, () => segmentProjects), [segmentProjects]);
 
@@ -174,7 +211,10 @@ export default function HomePage() {
     let resizeFrame: number | null = null;
 
     const updateColumns = () => {
-      setColumnCount(getColumnCount(window.innerWidth));
+      const nextColumnCount = getColumnCount(window.innerWidth);
+
+      setColumnCount(nextColumnCount);
+      setMinRowCount(getMinRowCount(window.innerWidth, window.innerHeight, nextColumnCount));
     };
 
     const handleResize = () => {
@@ -230,6 +270,25 @@ export default function HomePage() {
       window.removeEventListener('resize', handleResize);
     };
   }, [loopedProjects]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(REDUCED_MOTION_QUERY);
+
+    const handleChange = () => {
+      prefersReducedMotionRef.current = mediaQuery.matches;
+
+      if (!mediaQuery.matches && !document.hidden && !isContactOpenRef.current && !isProjectOpeningRef.current) {
+        startAnimation();
+      }
+    };
+
+    handleChange();
+    mediaQuery.addEventListener('change', handleChange);
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+    };
+  }, []);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -322,7 +381,7 @@ export default function HomePage() {
 
   return (
     <main className="fixed inset-0 overflow-hidden bg-ink text-ash">
-      <header className="site-banner absolute inset-x-0 top-0 z-[80] bg-ink/16 backdrop-blur-sm">
+      <header className="site-banner absolute inset-x-0 top-0 z-[80] bg-ink/75 md:bg-ink/16 md:backdrop-blur-sm">
         <div className="flex items-center justify-between gap-4 px-4 py-4 md:grid md:grid-cols-[auto_1fr_auto] md:px-6">
           <div className="flex min-h-10 items-center">
             <Image src="/images/LOGOnowe.png" alt="Logo" width={160} height={104} className="h-11 w-auto object-contain md:h-12" priority />
