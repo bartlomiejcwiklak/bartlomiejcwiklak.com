@@ -44,32 +44,24 @@ function getColumnCount(width: number) {
   return 2;
 }
 
-// Each looped segment must be at least as tall as the viewport, otherwise a gap shows at the loop seam.
+// Rows needed below the loop segment so the viewport never runs past the end of the track.
 function getMinRowCount(width: number, height: number, columnCount: number) {
   const cardSize = width / columnCount;
 
   return Math.ceil(height / cardSize) + 1;
 }
 
-// Fills the segment cyclically with projects. The row count is picked so that cards meeting across the
-// segment seam are never the same project directly above or diagonally next to each other.
-function getSegmentProjects(columnCount: number, minRowCount: number) {
-  const projectCount = projects.length;
-  const startRows = Math.max(minRowCount, Math.ceil(projectCount / columnCount));
-  let rowCount = (columnCount / getGreatestCommonDivisor(projectCount, columnCount)) * projectCount / columnCount;
+// The segment holds lcm(projects, columns) cards so it ends on a full row and a full project cycle,
+// which keeps the reading order continuous across the loop seam.
+function getSegmentProjects(columnCount: number) {
+  const repeatCount = columnCount / getGreatestCommonDivisor(projects.length, columnCount);
 
-  for (let rows = startRows; rows < startRows + projectCount; rows += 1) {
-    const seamShift = (((columnCount - rows * columnCount) % projectCount) + projectCount) % projectCount;
+  return Array.from({ length: repeatCount }, () => projects).flat();
+}
 
-    if (seamShift > 1 && seamShift < projectCount - 1) {
-      rowCount = rows;
-      break;
-    }
-  }
-
-  rowCount = Math.max(rowCount, minRowCount);
-
-  return Array.from({ length: rowCount * columnCount }, (_, index) => projects[index % projectCount]);
+// Continuation of the sequence after the segment, just tall enough to cover the viewport at the seam.
+function getTailProjects(columnCount: number, minRowCount: number) {
+  return Array.from({ length: minRowCount * columnCount }, (_, index) => projects[index % projects.length]);
 }
 
 function ProjectCard({
@@ -145,7 +137,7 @@ export default function HomePage() {
     }
 
     const normalizedOffset = ((currentOffsetRef.current % segmentHeight) + segmentHeight) % segmentHeight;
-    trackElement.style.transform = `translate3d(0, ${-segmentHeight - normalizedOffset}px, 0)`;
+    trackElement.style.transform = `translate3d(0, ${-normalizedOffset}px, 0)`;
   };
 
   const stopAnimation = () => {
@@ -203,9 +195,10 @@ export default function HomePage() {
     animationFrameRef.current = window.requestAnimationFrame(animate);
   };
 
-  const segmentProjects = useMemo(() => getSegmentProjects(columnCount, minRowCount), [columnCount, minRowCount]);
-
-  const loopedProjects = useMemo(() => Array.from({ length: 3 }, () => segmentProjects), [segmentProjects]);
+  const loopedProjects = useMemo(
+    () => [getSegmentProjects(columnCount), getTailProjects(columnCount, minRowCount)],
+    [columnCount, minRowCount]
+  );
 
   useEffect(() => {
     let resizeFrame: number | null = null;
@@ -443,7 +436,7 @@ export default function HomePage() {
           {loopedProjects.map((projectGroup, groupIndex) => (
             <div
               key={groupIndex}
-              ref={groupIndex === 1 ? segmentRef : undefined}
+              ref={groupIndex === 0 ? segmentRef : undefined}
               className="grid grid-cols-2 border-t border-line/35 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
             >
               {projectGroup.map((project, projectIndex) => (
