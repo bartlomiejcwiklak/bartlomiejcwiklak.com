@@ -4,6 +4,9 @@
 
 :root {
   color-scheme: dark;
+  --color-ash: 243 241 232;
+  --color-ink: 11 11 11;
+  --color-line: 216 210 196;
 }
 
 * {
@@ -19,8 +22,8 @@ body {
   height: 100%;
   margin: 0;
   overflow-x: hidden;
-  background: #0b0b0b;
-  color: #f3f1e8;
+  background: rgb(var(--color-ink));
+  color: rgb(var(--color-ash));
 }
 
 a {
@@ -33,12 +36,8 @@ img {
 }
 
 ::selection {
-  background: #f3f1e8;
-  color: #0b0b0b;
-}
-
-.project-return-active .site-banner {
-  opacity: 0;
+  background: rgb(var(--color-ash));
+  color: rgb(var(--color-ink));
 }
 
 .scrollbar-none {
@@ -81,11 +80,9 @@ img {
 @keyframes project-entry {
   from {
     opacity: 0;
-    transform: translateY(24px) scale(0.985);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
   }
 }

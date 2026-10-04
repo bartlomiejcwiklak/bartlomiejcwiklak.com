@@ -1,3 +1,5 @@
+import type { PageTheme } from '@/lib/theme';
+
 export type ContentBlock =
   | { type: 'text'; value: string }
   | { type: 'quote'; value: string; author?: string; link?: string }
@@ -20,6 +22,8 @@ export interface Project {
   description: string;
   content?: ContentBlock[];
   pl?: ProjectTranslation;
+  // Optional page colors, e.g. { background: '#F3F1E8', text: '#0B0B0B' }.
+  theme?: PageTheme;
 }
 
 export const projects: Project[] = [
@@ -65,6 +69,7 @@ export const projects: Project[] = [
     title: 'NRINGBUS',
     year: '2026',
     category: 'Web Design',
+    theme: { background: '#151517', text: '#e23c3f' },
     imageUrl: '/images/optimized/nringbusthumb.webp',
     description: 'Turning a niche motorsport trip into a clear, trustworthy booking experience. A conversion-focused website for a licensed premium transport service from Poland to the Nurburgring.',
     content: [
@@ -88,6 +93,7 @@ export const projects: Project[] = [
     title: 'SOUL CRYSTAL',
     year: '2026',
     category: 'Graphic Design',
+    theme: { background: '#55060b', text: '#F3F1E8' },
     imageUrl: '/images/optimized/marzz.webp',
     description: 'Translating sound into striking visual narratives. A comprehensive, long-term creative partnership with the music label Soul Crystal, focused on delivering cohesive and dynamic marketing materials.',
     content: [
@@ -179,6 +185,7 @@ export const projects: Project[] = [
     title: 'HOMETRIA',
     year: '2026',
     category: 'Web Design',
+    theme: { background: '#f3f1e8', text: '#bb166e' },
     imageUrl: '/images/optimized/hometria.webp',
     description: 'A clean, conversion-focused property platform. A website for Hometria - a real estate listings office built to connect buyers, renters and agents through an intuitive, trust-first digital experience.',
     content: [
@@ -200,6 +207,7 @@ export const projects: Project[] = [
     title: 'IDME',
     year: '2026',
     category: 'Web Design',
+    theme: { background: '#000000', text: '#dbfe43' },
     imageUrl: '/images/optimized/idmemock.webp',
     description: "Gamifying the music discovery experience. A fully functional, interactive web application designed to challenge users' musical knowledge through a sleek, responsive, and engaging user interface.",
     content: [
@@ -229,6 +237,7 @@ export const projects: Project[] = [
     title: 'TOPGOLF X YOASOBI',
     year: '2026',
     category: 'Graphic Design',
+    theme: { background: '#c53281', text: '#f3f1e8' },
     imageUrl: '/images/optimized/yoasobi1.webp',
     description: 'Bridging the gap between active entertainment and vibrant J-Pop. A high-impact promotional poster celebrating a unique crossover event between the US-based entertainment venue Topgolf and the acclaimed Japanese music duo YOASOBI.',
     content: [
@@ -249,6 +258,7 @@ export const projects: Project[] = [
     id: 'book-covers',
     title: 'BOOK DESIGN',
     year: '2025',
+    theme: { background: '#3a3a55', text: '#F3F1E8' },
     category: 'Graphic Design',
     imageUrl: '/images/optimized/bookdesignthumb.webp',
     description: 'Capturing the essence of a narrative in a single, compelling image. A curated collection of conceptual book cover designs focused on visual storytelling, creative typography, and genre adaptability.',

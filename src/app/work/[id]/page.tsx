@@ -1,14 +1,11 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { ContactButton } from '@/components/contact/contact-overlay';
-import { LocalizedText } from '@/components/i18n/language';
-import { LanguageSwitcher, MobileMenu } from '@/components/i18n/language-switcher';
 import { SiteFooter } from '@/components/layout/site-footer';
-import { ProjectMedia } from '@/components/media/project-media';
-import { ProjectBackLogo } from '@/components/project/project-back-link';
+import { SiteHeader } from '@/components/layout/site-header';
 import { LocalizedProjectDetails } from '@/components/project/localized-project-details';
 import { ProjectTags } from '@/components/project/project-tags';
 import { projects } from '@/data/projects';
+import { getThemeStyle } from '@/lib/theme';
 
 type ProjectPageProps = {
   params: {
@@ -27,14 +24,17 @@ export function generateMetadata({ params }: ProjectPageProps): Metadata {
     return {};
   }
 
+  // Web projects get the Polish service phrase in the title to rank for local web design searches.
+  const title = project.category === 'Web Design' ? `${project.title} – projekt strony internetowej` : project.title;
+
   return {
-    title: project.title,
+    title,
     description: project.description,
     alternates: {
       canonical: `/work/${project.id}`
     },
     openGraph: {
-      title: `${project.title} | Bartlomiej Cwiklak`,
+      title: `${title} | Bartłomiej Ćwiklak`,
       description: project.description,
       url: `/work/${project.id}`,
       images: [
@@ -60,57 +60,25 @@ export default function ProjectPage({ params }: ProjectPageProps) {
   const tags = [project.category, project.year];
 
   return (
-    <main className="min-h-screen bg-ink text-ash">
-      <header className="site-banner fixed inset-x-0 top-0 z-[80] bg-ink/16 backdrop-blur-sm">
-        <div className="flex items-center justify-between gap-4 px-4 py-4 md:grid md:grid-cols-[auto_1fr_auto] md:px-6">
-          <ProjectBackLogo project={project} />
+    <main className="min-h-screen bg-ink text-ash" style={getThemeStyle(project.theme)}>
+      <SiteHeader />
 
-          <MobileMenu />
-
-          <div className="hidden translate-x-36 justify-self-center gap-12 font-mono text-[0.56rem] font-semibold uppercase leading-[1.35] tracking-[0.28em] text-ash/82 md:flex lg:translate-x-44">
-            <div>
-              <span className="block text-left"><LocalizedText translationKey="graphicDesigner" /></span>
-              <span className="mt-1 block text-left"><LocalizedText translationKey="webDeveloper" /></span>
-            </div>
-            <span className="translate-x-4 self-start whitespace-nowrap text-left"><LocalizedText translationKey="location" /></span>
-          </div>
-
-          <div className="hidden items-center gap-5 md:flex md:justify-self-end">
-            <LanguageSwitcher />
-            <ContactButton
-              className="inline-flex min-h-10 items-center rounded-full bg-ash px-5 font-mono text-[0.68rem] uppercase tracking-[0.24em] text-ink transition hover:opacity-70"
-            />
-          </div>
-        </div>
-      </header>
-
-      <section className="project-entry flex min-h-[30vh] items-center justify-center bg-ink px-4 pb-10 pt-28 text-center md:min-h-[75vh] md:px-6 md:pt-32">
-        <div className="mx-auto max-w-[92rem]">
-          <h1 className="text-[clamp(3.8rem,15vw,16rem)] font-bold uppercase leading-[0.82] tracking-[-0.08em] text-ash">
+      {/* Same margins and top offset as the menu, blog and policy pages; top padding clears the fixed logo. */}
+      <article className="px-8 pb-24 pt-[calc(2.5rem+env(safe-area-inset-top)+7rem)] md:px-16 md:pb-32 md:pt-48 lg:px-24">
+        <header className="max-w-5xl">
+          <h1 className="project-entry text-[clamp(2.75rem,9vw,8rem)] font-bold uppercase leading-[0.9] tracking-[-0.06em]">
             {project.title}
           </h1>
 
-          <ProjectTags tags={tags} />
-        </div>
-      </section>
+          <div className="project-entry project-entry-delay-1 mt-6">
+            <ProjectTags tags={tags} />
+          </div>
+        </header>
 
-      <section className="project-entry project-entry-delay-1 px-4 md:px-6">
-        <div className="overflow-hidden">
-          <ProjectMedia
-            src={project.imageUrl}
-            alt={project.title}
-            mediaType={project.mediaType}
-            posterUrl={project.posterUrl}
-            sizes="100vw"
-            className="aspect-[4/3] w-full object-cover md:aspect-[16/9]"
-            priority
-          />
-        </div>
-      </section>
+        <LocalizedProjectDetails project={project} />
+      </article>
 
-      <LocalizedProjectDetails project={project} />
-
-      <SiteFooter project={project} />
+      <SiteFooter />
     </main>
   );
 }

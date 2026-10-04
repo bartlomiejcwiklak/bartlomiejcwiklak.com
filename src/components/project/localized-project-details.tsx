@@ -2,16 +2,18 @@
 
 import Image from 'next/image';
 import { useLanguage, type Language } from '@/components/i18n/language';
+import { ProjectMedia } from '@/components/media/project-media';
 import type { ContentBlock, Project } from '@/data/projects';
 
-function getTextBlocks(content: ContentBlock[] | undefined, description: string, fallbackDetails: string) {
+// The description is shown as the lead, so the body falls back to a short note instead of repeating it.
+function getTextBlocks(content: ContentBlock[] | undefined, fallbackDetails: string) {
   const blocks = content?.filter((block): block is Extract<ContentBlock, { type: 'text' }> => block.type === 'text') ?? [];
 
   if (blocks.length) {
     return blocks.map((block) => block.value);
   }
 
-  return [description, fallbackDetails];
+  return [fallbackDetails];
 }
 
 function getImageBlocks(content: ContentBlock[] | undefined, fallbackImage: string, fallbackCaption: string) {
@@ -50,34 +52,48 @@ function getLocalizedProject(project: Project, language: Language) {
   };
 }
 
+// Project body laid out like the policy and blog pages: a muted lead, the hero image, a numbered two-column
+// section with the case study text, then the image gallery.
 export function LocalizedProjectDetails({ project }: { project: Project }) {
   const { language, t } = useLanguage();
   const localizedProject = getLocalizedProject(project, language);
-  const textBlocks = getTextBlocks(localizedProject.content, localizedProject.description, t('fallbackDetails'));
+  const textBlocks = getTextBlocks(localizedProject.content, t('fallbackDetails'));
   const imageBlocks = getImageBlocks(localizedProject.content, localizedProject.imageUrl, t('projectVisualArchive'));
 
   return (
     <>
-      <section className="project-entry project-entry-delay-2 mx-auto max-w-6xl px-4 py-14 md:px-6 md:py-24">
-        <p className="max-w-[22ch] text-[clamp(2rem,4.8vw,5.4rem)] font-semibold leading-[0.98] tracking-[-0.05em] text-ash">
-          {localizedProject.description}
-        </p>
+      <p className="project-entry project-entry-delay-2 mt-6 max-w-2xl text-base leading-7 text-ash/72 md:text-lg md:leading-8">
+        {localizedProject.description}
+      </p>
+
+      <div className="project-entry project-entry-delay-3 mt-14 overflow-hidden md:mt-20">
+        <ProjectMedia
+          src={project.imageUrl}
+          alt={project.title}
+          mediaType={project.mediaType}
+          posterUrl={project.posterUrl}
+          sizes="100vw"
+          className="aspect-[4/3] w-full object-cover md:aspect-[16/9]"
+          priority
+        />
+      </div>
+
+      <section className="mt-14 grid gap-5 border-y border-line/20 py-10 md:mt-20 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:gap-16 md:py-14">
+        <div>
+          <span className="font-mono text-[0.68rem] tracking-[0.2em] text-ash/50 md:text-xs">01</span>
+          <h2 className="mt-3 text-[clamp(1.4rem,2.6vw,2.25rem)] font-bold uppercase leading-none tracking-[-0.04em]">{t('aboutProject')}</h2>
+        </div>
+
+        <div className="grid max-w-2xl gap-5 text-base leading-7 text-ash/72 md:text-lg md:leading-8">
+          {textBlocks.map((block, index) => (
+            <p key={`${localizedProject.id}-text-${index}`}>{block}</p>
+          ))}
+        </div>
       </section>
 
-      <section className="mx-auto grid max-w-4xl gap-8 px-4 pb-14 md:px-6 md:pb-24">
-        {textBlocks.map((block, index) => (
-          <p
-            key={`${localizedProject.id}-text-${index}`}
-            className="project-entry project-entry-delay-3 text-left text-lg leading-8 text-ash/82 md:text-xl md:leading-9"
-          >
-            {block}
-          </p>
-        ))}
-      </section>
-
-      <section className="grid gap-6 bg-ink px-2 pb-16 md:gap-10 md:px-4 md:pb-24">
+      <section className="mt-14 grid gap-6 md:mt-20 md:gap-10">
         {imageBlocks.map((image, index) => (
-          <figure key={`${image.url}-${index}`} className="project-entry project-entry-delay-3 bg-ink">
+          <figure key={`${image.url}-${index}`}>
             <Image
               src={image.url}
               alt={image.caption ?? `${localizedProject.title} visual ${index + 1}`}
@@ -87,6 +103,9 @@ export function LocalizedProjectDetails({ project }: { project: Project }) {
               className="h-auto w-full object-contain"
               loading="lazy"
             />
+            {image.caption ? (
+              <figcaption className="mt-3 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-ash/50">{image.caption}</figcaption>
+            ) : null}
           </figure>
         ))}
       </section>

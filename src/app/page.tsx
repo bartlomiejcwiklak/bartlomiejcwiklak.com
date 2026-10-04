@@ -1,12 +1,10 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useContactOverlay } from '@/components/contact/contact-overlay';
-import { LanguageSwitcher, MobileMenu } from '@/components/i18n/language-switcher';
-import { useLanguage } from '@/components/i18n/language';
+import { SiteHeader } from '@/components/layout/site-header';
 import { ProjectMedia } from '@/components/media/project-media';
+import { navigateWithTransition } from '@/components/navigation/page-transition';
 import { projects } from '@/data/projects';
 
 const SCROLL_EASING = 0.11;
@@ -69,7 +67,7 @@ function ProjectCard({
   onOpen
 }: {
   project: (typeof projects)[number];
-  onOpen: (project: (typeof projects)[number], element: HTMLElement) => void;
+  onOpen: (project: (typeof projects)[number]) => void;
 }) {
   const { id, title, year, imageUrl, mediaType, posterUrl } = project;
 
@@ -78,10 +76,15 @@ function ProjectCard({
       href={`/work/${id}`}
       data-project-id={id}
       onClick={(event) => {
+        // Let the browser handle new-tab and other modified clicks.
+        if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+          return;
+        }
+
         event.preventDefault();
-        onOpen(project, event.currentTarget);
+        onOpen(project);
       }}
-      className="group relative block border border-line/35 transition"
+      className="group relative block"
     >
       <article>
         <div className="overflow-hidden">
@@ -111,8 +114,7 @@ function ProjectCard({
 }
 
 export default function HomePage() {
-  const { isContactOpen, openContact } = useContactOverlay();
-  const { t } = useLanguage();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const segmentRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | null>(null);
@@ -123,7 +125,7 @@ export default function HomePage() {
   const currentOffsetRef = useRef(0);
   const targetOffsetRef = useRef(0);
   const segmentHeightRef = useRef(0);
-  const isContactOpenRef = useRef(false);
+  const isMenuOpenRef = useRef(false);
   const prefersReducedMotionRef = useRef(false);
   const [columnCount, setColumnCount] = useState(5);
   const [minRowCount, setMinRowCount] = useState(0);
@@ -153,7 +155,7 @@ export default function HomePage() {
   const animate = (timestamp: number) => {
     const segmentHeight = segmentHeightRef.current;
 
-    if (!segmentHeight || !trackRef.current || isContactOpenRef.current || isProjectOpeningRef.current || document.hidden) {
+    if (!segmentHeight || !trackRef.current || isMenuOpenRef.current || isProjectOpeningRef.current || document.hidden) {
       stopAnimation();
       return;
     }
@@ -244,7 +246,7 @@ export default function HomePage() {
       segmentHeightRef.current = segmentHeight;
       applyTrackTransform();
 
-      if (!isContactOpenRef.current && !isProjectOpeningRef.current && !document.hidden) {
+      if (!isMenuOpenRef.current && !isProjectOpeningRef.current && !document.hidden) {
         startAnimation();
       }
     };
@@ -270,7 +272,7 @@ export default function HomePage() {
     const handleChange = () => {
       prefersReducedMotionRef.current = mediaQuery.matches;
 
-      if (!mediaQuery.matches && !document.hidden && !isContactOpenRef.current && !isProjectOpeningRef.current) {
+      if (!mediaQuery.matches && !document.hidden && !isMenuOpenRef.current && !isProjectOpeningRef.current) {
         startAnimation();
       }
     };
@@ -285,7 +287,7 @@ export default function HomePage() {
 
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (!document.hidden && !isContactOpenRef.current && !isProjectOpeningRef.current) {
+      if (!document.hidden && !isMenuOpenRef.current && !isProjectOpeningRef.current) {
         startAnimation();
         return;
       }
@@ -308,9 +310,9 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    isContactOpenRef.current = isContactOpen;
+    isMenuOpenRef.current = isMenuOpen;
 
-    if (isContactOpen) {
+    if (isMenuOpen) {
       stopAnimation();
       return;
     }
@@ -318,10 +320,10 @@ export default function HomePage() {
     if (!document.hidden && !isProjectOpeningRef.current) {
       startAnimation();
     }
-  }, [isContactOpen]);
+  }, [isMenuOpen]);
 
   const nudge = (delta: number) => {
-    if (isContactOpen || isProjectOpeningRef.current) {
+    if (isMenuOpen || isProjectOpeningRef.current) {
       return;
     }
 
@@ -329,85 +331,22 @@ export default function HomePage() {
     startAnimation();
   };
 
-  const openProject = (project: (typeof projects)[number], element: HTMLElement) => {
+  const openProject = (project: (typeof projects)[number]) => {
     if (isProjectOpeningRef.current) {
       return;
     }
 
     isProjectOpeningRef.current = true;
     stopAnimation();
-
-    const rect = element.getBoundingClientRect();
-    const href = `/work/${project.id}`;
-
-    window.sessionStorage.setItem(
-      'project-transition-origin',
-      JSON.stringify({
-        id: project.id,
-        imageUrl: project.imageUrl,
-        mediaType: project.mediaType,
-        posterUrl: project.posterUrl,
-        left: rect.left,
-        top: rect.top,
-        width: rect.width,
-        height: rect.height
-      })
-    );
-
-    window.dispatchEvent(
-      new CustomEvent('project-open-transition', {
-        detail: {
-          id: project.id,
-          title: project.title,
-          imageUrl: project.imageUrl,
-          mediaType: project.mediaType,
-          posterUrl: project.posterUrl,
-          left: rect.left,
-          top: rect.top,
-          width: rect.width,
-          height: rect.height,
-          href
-        }
-      })
-    );
+    navigateWithTransition(`/work/${project.id}`);
   };
 
   return (
     <main className="fixed inset-0 overflow-hidden bg-ink text-ash">
-      <header className="site-banner absolute inset-x-0 top-0 z-[80] bg-ink/75 md:bg-ink/16 md:backdrop-blur-sm">
-        <div className="flex items-center justify-between gap-4 px-4 py-4 md:grid md:grid-cols-[auto_1fr_auto] md:px-6">
-          <div className="flex min-h-10 items-center">
-            <Image src="/images/LOGOnowe.png" alt="Logo" width={160} height={104} className="h-11 w-auto object-contain md:h-12" priority />
-          </div>
-
-          <MobileMenu onBeforeContact={stopAnimation} />
-
-          <div className="hidden translate-x-36 justify-self-center gap-12 font-mono text-[0.56rem] font-semibold uppercase leading-[1.35] tracking-[0.28em] text-ash/82 md:flex lg:translate-x-44">
-            <div>
-              <span className="block text-left">{t('graphicDesigner')}</span>
-              <span className="mt-1 block text-left">{t('webDeveloper')}</span>
-            </div>
-            <span className="translate-x-4 self-start whitespace-nowrap text-left">{t('location')}</span>
-          </div>
-
-          <div className="hidden items-center gap-5 md:flex md:justify-self-end">
-            <LanguageSwitcher />
-            <button
-              type="button"
-              onClick={() => {
-                stopAnimation();
-                openContact();
-              }}
-              className="inline-flex min-h-10 items-center rounded-full bg-ash px-5 font-mono text-[0.68rem] uppercase tracking-[0.24em] text-ink transition hover:opacity-70"
-            >
-              {t('contact')}
-            </button>
-          </div>
-        </div>
-      </header>
+      <SiteHeader onMenuOpenChange={setIsMenuOpen} />
 
       <div
-        className="scrollbar-none h-full overflow-hidden overscroll-none pb-[4.5rem] pt-[4.5rem] md:pb-[4.75rem] md:pt-[4.75rem]"
+        className="scrollbar-none h-full overflow-hidden overscroll-none"
         onWheel={(event) => {
           event.preventDefault();
           nudge(event.deltaY);
@@ -437,7 +376,7 @@ export default function HomePage() {
             <div
               key={groupIndex}
               ref={groupIndex === 0 ? segmentRef : undefined}
-              className="grid grid-cols-2 border-t border-line/35 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+              className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
             >
               {projectGroup.map((project, projectIndex) => (
                 <ProjectCard key={`${groupIndex}-${project.id}-${projectIndex}`} project={project} onOpen={openProject} />

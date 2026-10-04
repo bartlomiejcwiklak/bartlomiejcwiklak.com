@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 
 export type Language = 'en' | 'pl';
 
-type TranslationKey =
+export type TranslationKey =
   | 'contact'
   | 'close'
   | 'menu'
@@ -12,19 +12,32 @@ type TranslationKey =
   | 'graphicDesigner'
   | 'webDeveloper'
   | 'location'
-  | 'backToWork'
   | 'backToPortfolio'
   | 'allRightsReserved'
   | 'privacyPolicy'
   | 'aiPolicy'
-  | 'contactHeading'
   | 'contactEmail'
   | 'contactCall'
-  | 'option01'
-  | 'option02'
   | 'fallbackDetails'
   | 'projectVisualArchive'
+  | 'aboutProject'
+  | 'work'
+  | 'menuIntro'
+  | 'contactTitle'
+  | 'contactLead'
+  | 'back'
+  | 'blog'
+  | 'blogIntro'
+  | 'blogEmpty'
+  | 'backToBlog'
+  | 'minRead'
+  | 'updatedOn'
+  | 'readArticle'
   | 'privacyTitle'
+  | 'privacyH1'
+  | 'privacyH2'
+  | 'privacyH3'
+  | 'privacyH4'
   | 'privacyP1'
   | 'privacyP2'
   | 'privacyP3'
@@ -52,24 +65,37 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     graphicDesigner: 'Graphic Designer',
     webDeveloper: '& Web Developer',
     location: 'Lodz, Poland',
-    backToWork: 'Back to Work',
     backToPortfolio: 'Back to portfolio',
     allRightsReserved: 'All rights reserved.',
     privacyPolicy: 'Privacy Policy',
     aiPolicy: 'AI Policy',
-    contactHeading: 'Thanks for reaching out!',
     contactEmail: 'Send an email',
     contactCall: 'Book a phone call',
-    option01: 'Option 01',
-    option02: 'Option 02',
     fallbackDetails: 'More case study details, process notes and production context will be added as this project archive grows.',
     projectVisualArchive: 'Project visual archive',
+    aboutProject: 'About the project',
+    work: 'Work',
+    contactTitle: 'Let’s talk about your project.',
+    contactLead: 'Send me an email or book a short call, whichever is easier for you.',
+    back: 'Back',
+    menuIntro: 'I am Bartłomiej, a graphic designer and web developer based in Łódź, Poland. I design visual identities and build fast, thoughtful websites for brands and small businesses.',
+    blog: 'Blog',
+    blogIntro: 'Notes on graphic design, web development and the process behind the work.',
+    blogEmpty: 'The first articles are on their way.',
+    backToBlog: 'Back to Blog',
+    minRead: 'min read',
+    updatedOn: 'Updated',
+    readArticle: 'Read article',
     privacyTitle: 'Privacy Policy',
+    privacyH1: 'About this site',
+    privacyH2: 'Your data',
+    privacyH3: 'External links',
+    privacyH4: 'Changes',
     privacyP1: 'This website is a personal portfolio for Bartlomiej Cwiklak. It is designed to present selected work and provide ways to get in touch.',
     privacyP2: 'The website does not intentionally collect personal data unless you choose to contact me through email or an external social platform.',
     privacyP3: 'External links, including social media profiles, may be governed by their own privacy policies. Please review those policies when using external services.',
     privacyP4: 'If analytics, forms, or additional services are added in the future, this policy will be updated to reflect what data is collected and why.',
-    aiTitle: 'AI Policy: Balancing Craftsmanship and Technology',
+    aiTitle: 'Balancing craftsmanship and technology',
     aiIntro: 'In a rapidly evolving digital landscape, transparency regarding the tools we use is essential. My approach to Artificial Intelligence is guided by a strict boundary: AI is a powerful engine for execution, but it is never a substitute for human creativity.',
     aiHumanTitle: 'Design is 100% Human-Driven',
     aiHumanP1: 'Every visual and creative decision-from the foundational architectural layout and typographic spacing to the final aesthetic direction-is crafted entirely by me.',
@@ -89,24 +115,37 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     graphicDesigner: 'Projektant graficzny',
     webDeveloper: 'i Web Developer',
     location: 'Łódź, Polska',
-    backToWork: 'Wróć do projektów',
     backToPortfolio: 'Wróć do portfolio',
     allRightsReserved: 'Wszelkie prawa zastrzeżone.',
     privacyPolicy: 'Polityka prywatności',
     aiPolicy: 'Polityka AI',
-    contactHeading: 'Dzięki za kontakt!',
     contactEmail: 'Wyślij email',
     contactCall: 'Umów rozmowę',
-    option01: 'Opcja 01',
-    option02: 'Opcja 02',
     fallbackDetails: 'Więcej szczegółów case study, notatek z procesu i kontekstu produkcyjnego pojawi się wraz z rozwojem archiwum projektów.',
     projectVisualArchive: 'Archiwum wizualne projektu',
+    aboutProject: 'O projekcie',
+    work: 'Projekty',
+    contactTitle: 'Porozmawiajmy o Twoim projekcie.',
+    contactLead: 'Napisz maila albo umów krótką rozmowę – jak Ci wygodniej.',
+    back: 'Wróć',
+    menuIntro: 'Jestem Bartłomiej, projektant graficzny i web developer z Łodzi. Projektuję identyfikacje wizualne i tworzę szybkie, przemyślane strony internetowe dla marek i małych firm.',
+    blog: 'Blog',
+    blogIntro: 'Notatki o projektowaniu graficznym, tworzeniu stron i procesie stojącym za projektami.',
+    blogEmpty: 'Pierwsze artykuły są w drodze.',
+    backToBlog: 'Wróć do bloga',
+    minRead: 'min czytania',
+    updatedOn: 'Zaktualizowano',
+    readArticle: 'Czytaj artykuł',
     privacyTitle: 'Polityka prywatności',
+    privacyH1: 'O stronie',
+    privacyH2: 'Twoje dane',
+    privacyH3: 'Linki zewnętrzne',
+    privacyH4: 'Zmiany',
     privacyP1: 'Ta strona jest osobistym portfolio Bartłomieja Ćwiklaka. Służy do prezentacji wybranych prac oraz udostępnienia sposobów kontaktu.',
     privacyP2: 'Strona nie zbiera celowo danych osobowych, chyba że zdecydujesz się skontaktować ze mną przez email lub zewnętrzną platformę społecznościową.',
     privacyP3: 'Linki zewnętrzne, w tym profile społecznościowe, mogą podlegać własnym politykom prywatności. Zapoznaj się z nimi podczas korzystania z usług zewnętrznych.',
     privacyP4: 'Jeśli w przyszłości zostaną dodane analityka, formularze lub dodatkowe usługi, ta polityka zostanie zaktualizowana o informacje, jakie dane są zbierane i dlaczego.',
-    aiTitle: 'Polityka AI: rzemiosło i technologia',
+    aiTitle: 'Rzemiosło i technologia',
     aiIntro: 'W szybko zmieniającym się świecie cyfrowym transparentność dotycząca używanych narzędzi jest kluczowa. Moje podejście do sztucznej inteligencji opiera się na jasnej granicy: AI jest silnikiem wykonawczym, ale nigdy nie zastępuje ludzkiej kreatywności.',
     aiHumanTitle: 'Design jest w 100% prowadzony przez człowieka',
     aiHumanP1: 'Każda decyzja wizualna i kreatywna - od układu, przez typografię, po finalny kierunek estetyczny - jest tworzona przeze mnie.',
