@@ -16,7 +16,6 @@ export function SiteFooter() {
           <PageTransitionLink href="/" className="flex w-fit items-center" ariaLabel={t('backToPortfolio')}>
             <SiteLogo className="h-10 md:h-12" />
           </PageTransitionLink>
-          <p className="mt-8 max-w-md text-base leading-7 text-ash/72 md:mt-10 md:text-lg md:leading-8">{t('menuIntro')}</p>
         </div>
 
         <nav aria-label={t('menu')} className="group/nav">
