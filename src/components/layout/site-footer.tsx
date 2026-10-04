@@ -2,7 +2,7 @@
 
 import { useLanguage } from '@/components/i18n/language';
 import { SiteLogo } from '@/components/layout/site-logo';
-import { MenuItemContent, menuItemClassName, openContactMenu, smallLinkClassName, socialLinks } from '@/components/navigation/menu-items';
+import { ExternalArrowIcon, MenuItemContent, menuItemClassName, openContactMenu, smallLinkClassName, socialLinks } from '@/components/navigation/menu-items';
 import { PageTransitionLink } from '@/components/navigation/page-transition';
 
 // Footer styled like the fullscreen menu: the same big links, social links and spacing.
@@ -42,7 +42,10 @@ export function SiteFooter() {
             {socialLinks.map((link) => (
               <li key={link.label}>
                 <a href={link.href} target="_blank" rel="noreferrer" className={smallLinkClassName}>
-                  {link.label} ↗
+                  <span className="inline-flex items-center gap-[0.3em]">
+                    {link.label}
+                    <ExternalArrowIcon />
+                  </span>
                 </a>
               </li>
             ))}

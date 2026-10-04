@@ -73,9 +73,9 @@ export function FixedLogo() {
     >
       <PageTransitionLink href="/" className="project-entry flex items-center" ariaLabel={t('backToPortfolio')}>
         <span role="img" aria-label="Bartłomiej Ćwiklak logo" className="relative block aspect-[480/321] h-10 md:h-12" style={themeStyle}>
-          {/* Outline in the page background colour, fill in the page text colour. */}
-          <span className="absolute inset-0 bg-ink" style={maskStyle('/images/logo-stroked-outline-mask.png')} />
-          <span className="absolute inset-0 bg-ash" style={maskStyle('/images/logo-stroked-fill-mask.png')} />
+          {/* Outline in the page background colour, fill in the page text colour; both fade to a new page's theme. */}
+          <span className="absolute inset-0 bg-ink transition-colors duration-500 ease-out" style={maskStyle('/images/logo-stroked-outline-mask.png')} />
+          <span className="absolute inset-0 bg-ash transition-colors duration-500 ease-out" style={maskStyle('/images/logo-stroked-fill-mask.png')} />
         </span>
       </PageTransitionLink>
     </div>

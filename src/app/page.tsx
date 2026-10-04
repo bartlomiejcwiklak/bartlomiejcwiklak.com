@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { SiteHeader } from '@/components/layout/site-header';
 import { ProjectMedia } from '@/components/media/project-media';
 import { navigateWithTransition } from '@/components/navigation/page-transition';
+import { GalleryCursorLabel } from '@/components/project/gallery-cursor-label';
 import { projects } from '@/data/projects';
 
 const SCROLL_EASING = 0.11;
@@ -75,6 +76,7 @@ function ProjectCard({
     <Link
       href={`/work/${id}`}
       data-project-id={id}
+      data-project-title={title}
       onClick={(event) => {
         // Let the browser handle new-tab and other modified clicks.
         if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
@@ -98,13 +100,14 @@ function ProjectCard({
             priority={id === projects[0]?.id}
           />
 
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/18" />
+          {/* With a mouse the title follows the cursor instead (GalleryCursorLabel); touch devices keep it on the card. */}
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/18 [@media(hover:hover)_and_(pointer:fine)]:hidden" />
 
-          <span className="pointer-events-none absolute right-3 top-3 font-mono text-[0.58rem] uppercase tracking-[0.22em] text-ash md:text-[0.62rem]">
+          <span className="pointer-events-none absolute right-3 top-3 [@media(hover:hover)_and_(pointer:fine)]:hidden font-mono text-[0.58rem] uppercase tracking-[0.22em] text-ash md:text-[0.62rem]">
             {year}
           </span>
 
-          <h2 className="pointer-events-none absolute bottom-3 left-3 max-w-[75%] text-[1rem] font-bold uppercase leading-none text-ash md:text-[1.1rem]">
+          <h2 className="pointer-events-none absolute bottom-3 left-3 max-w-[75%] text-[1rem] font-bold uppercase leading-none text-ash md:text-[1.1rem] [@media(hover:hover)_and_(pointer:fine)]:hidden">
             {title}
           </h2>
         </div>
@@ -115,6 +118,7 @@ function ProjectCard({
 
 export default function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const galleryRef = useRef<HTMLDivElement>(null);
   const segmentRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | null>(null);
@@ -345,7 +349,10 @@ export default function HomePage() {
     <main className="fixed inset-0 overflow-hidden bg-ink text-ash">
       <SiteHeader onMenuOpenChange={setIsMenuOpen} />
 
+      <GalleryCursorLabel containerRef={galleryRef} />
+
       <div
+        ref={galleryRef}
         className="scrollbar-none h-full overflow-hidden overscroll-none"
         onWheel={(event) => {
           event.preventDefault();

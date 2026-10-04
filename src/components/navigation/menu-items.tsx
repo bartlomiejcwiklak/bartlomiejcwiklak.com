@@ -24,6 +24,15 @@ export function ArrowIcon({ className }: { className: string }) {
   );
 }
 
+// Diagonal "external link" arrow drawn as SVG: the ↗ character turns into a coloured emoji on iOS.
+export function ExternalArrowIcon({ className = 'h-[0.8em] w-[0.8em]' }: { className?: string }) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 16 16" className={`inline-block shrink-0 ${className}`} fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 12 12 4M5.5 4H12v6.5" />
+    </svg>
+  );
+}
+
 // Hovering an item slides it right and reveals an arrow in front of it. Only transforms are animated, so the
 // link keeps its size and nothing around it reflows (important where the links sit in an auto-width column).
 export function MenuItemContent({ label, index }: { label: string; index: number }) {
@@ -32,7 +41,8 @@ export function MenuItemContent({ label, index }: { label: string; index: number
       <ArrowIcon className="absolute left-0 h-[0.6em] w-[0.6em] -translate-x-2 opacity-0 transition duration-300 ease-out group-hover/item:translate-x-0 group-hover/item:opacity-100" />
       <span className="flex transition-transform duration-300 ease-out group-hover/item:translate-x-[0.85em]">
         <span>{label}</span>
-        <sup className="ml-3 self-start pt-[0.35em] font-mono text-[0.68rem] font-normal tracking-[0.2em] text-ash/50 md:text-xs">
+        {/* Numbers only on wider screens: on phones they jump around next to words of different lengths. */}
+        <sup className="ml-3 hidden self-start pt-[0.35em] font-mono text-xs font-normal tracking-[0.2em] text-ash/50 md:inline">
           {String(index + 1).padStart(2, '0')}
         </sup>
       </span>

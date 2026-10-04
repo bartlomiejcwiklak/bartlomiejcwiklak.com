@@ -4,7 +4,7 @@ import type { MouseEvent } from 'react';
 import { useEffect } from 'react';
 import { useLanguage } from '@/components/i18n/language';
 import { LanguageSwitcher } from '@/components/i18n/language-switcher';
-import { ArrowIcon, MenuItemContent, menuItemClassName, smallLinkClassName, socialLinks } from '@/components/navigation/menu-items';
+import { ArrowIcon, ExternalArrowIcon, MenuItemContent, menuItemClassName, smallLinkClassName, socialLinks } from '@/components/navigation/menu-items';
 import { navigateWithTransition } from '@/components/navigation/page-transition';
 
 const CONTACT_EMAIL = 'contact@bartlomiejcwiklak.com';
@@ -128,7 +128,10 @@ export function SiteMenu({ isOpen, view, onViewChange, onClose }: SiteMenuProps)
                 {socialLinks.map((link) => (
                   <li key={link.label}>
                     <a href={link.href} target="_blank" rel="noreferrer" tabIndex={mainTabIndex} className={smallLinkClassName}>
-                      {link.label} ↗
+                      <span className="inline-flex items-center gap-[0.3em]">
+                        {link.label}
+                        <ExternalArrowIcon />
+                      </span>
                     </a>
                   </li>
                 ))}
@@ -179,7 +182,12 @@ export function SiteMenu({ isOpen, view, onViewChange, onClose }: SiteMenuProps)
                   <a href={CALL_URL} target="_blank" rel="noreferrer" tabIndex={contactTabIndex} className={menuItemClassName}>
                     <MenuItemContent label={t('contactCall')} index={1} />
                   </a>
-                  <p className="mt-2 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-ash/50">Calendly ↗</p>
+                  <p className="mt-2 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-ash/50">
+                    <span className="inline-flex items-center gap-2">
+                      Calendly
+                      <ExternalArrowIcon className="h-3 w-3" />
+                    </span>
+                  </p>
                 </li>
               </ul>
             </div>
