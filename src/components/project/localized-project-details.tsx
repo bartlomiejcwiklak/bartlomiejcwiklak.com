@@ -1,8 +1,10 @@
 'use client';
 
 import Image from 'next/image';
+import { useState } from 'react';
 import { useLanguage, type Language } from '@/components/i18n/language';
 import { ProjectMedia } from '@/components/media/project-media';
+import { ImageLightbox, type LightboxImage } from '@/components/project/image-lightbox';
 import type { ContentBlock, Project } from '@/data/projects';
 
 // The description is shown as the lead, so the body falls back to a short note instead of repeating it.
@@ -53,12 +55,32 @@ function getLocalizedProject(project: Project, language: Language) {
 }
 
 // Project body laid out like the policy and blog pages: a muted lead, the hero image, a numbered two-column
-// section with the case study text, then the image gallery.
+// section with the case study text, then the image gallery. Clicking an image opens it in a fullscreen preview.
 export function LocalizedProjectDetails({ project }: { project: Project }) {
   const { language, t } = useLanguage();
   const localizedProject = getLocalizedProject(project, language);
   const textBlocks = getTextBlocks(localizedProject.content, t('fallbackDetails'));
   const imageBlocks = getImageBlocks(localizedProject.content, localizedProject.imageUrl, t('projectVisualArchive'));
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const hasHeroImage = project.mediaType !== 'video';
+
+  // Everything the lightbox can show: the hero (unless it is a video) followed by the gallery, without repeats.
+  const lightboxImages: LightboxImage[] = [
+    ...(hasHeroImage ? [{ url: project.imageUrl, alt: project.title }] : []),
+    ...imageBlocks.map((image, index) => ({
+      url: image.url,
+      alt: image.caption ?? `${localizedProject.title} visual ${index + 1}`,
+      caption: image.caption
+    }))
+  ].filter((image, index, all) => all.findIndex((other) => other.url === image.url) === index);
+
+  const openImage = (url: string) => {
+    const index = lightboxImages.findIndex((image) => image.url === url);
+
+    if (index !== -1) {
+      setLightboxIndex(index);
+    }
+  };
 
   return (
     <>
@@ -66,7 +88,13 @@ export function LocalizedProjectDetails({ project }: { project: Project }) {
         {localizedProject.description}
       </p>
 
-      <div className="project-entry project-entry-delay-3 mt-14 overflow-hidden md:mt-20">
+      <button
+        type="button"
+        disabled={!hasHeroImage}
+        onClick={() => openImage(project.imageUrl)}
+        aria-label={t('openImage')}
+        className="project-entry project-entry-delay-3 mt-14 block w-full overflow-hidden enabled:cursor-zoom-in md:mt-20"
+      >
         <ProjectMedia
           src={project.imageUrl}
           alt={project.title}
@@ -76,7 +104,7 @@ export function LocalizedProjectDetails({ project }: { project: Project }) {
           className="aspect-[4/3] w-full object-cover md:aspect-[16/9]"
           priority
         />
-      </div>
+      </button>
 
       <section className="mt-14 grid gap-5 border-y border-line/20 py-10 md:mt-20 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:gap-16 md:py-14">
         <div>
@@ -94,21 +122,25 @@ export function LocalizedProjectDetails({ project }: { project: Project }) {
       <section className="mt-14 grid gap-6 md:mt-20 md:gap-10">
         {imageBlocks.map((image, index) => (
           <figure key={`${image.url}-${index}`}>
-            <Image
-              src={image.url}
-              alt={image.caption ?? `${localizedProject.title} visual ${index + 1}`}
-              width={1600}
-              height={1200}
-              sizes="100vw"
-              className="h-auto w-full object-contain"
-              loading="lazy"
-            />
+            <button type="button" onClick={() => openImage(image.url)} aria-label={t('openImage')} className="block w-full cursor-zoom-in">
+              <Image
+                src={image.url}
+                alt={image.caption ?? `${localizedProject.title} visual ${index + 1}`}
+                width={1600}
+                height={1200}
+                sizes="100vw"
+                className="h-auto w-full object-contain"
+                loading="lazy"
+              />
+            </button>
             {image.caption ? (
               <figcaption className="mt-3 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-ash/50">{image.caption}</figcaption>
             ) : null}
           </figure>
         ))}
       </section>
+
+      <ImageLightbox images={lightboxImages} index={lightboxIndex} onIndexChange={setLightboxIndex} />
     </>
   );
 }

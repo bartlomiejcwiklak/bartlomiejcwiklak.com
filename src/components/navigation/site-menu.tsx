@@ -103,7 +103,7 @@ export function SiteMenu({ isOpen, view, onViewChange, onClose }: SiteMenuProps)
 
         <div className="relative flex-1">
           <section aria-hidden={!isMainVisible} className={viewClassName(view === 'main', isMainVisible, '-translate-y-12')}>
-            <p className="max-w-md text-base leading-7 text-ash/72 md:text-lg md:leading-8">{t('menuIntro')}</p>
+            <p className="max-w-md text-base leading-7 text-ash/72 md:max-w-2xl md:text-lg md:leading-8 lg:max-w-3xl">{t('menuIntro')}</p>
 
             <nav className="group/nav flex flex-1 flex-col justify-center py-8">
               <ul className="grid justify-items-start gap-1 md:gap-2">
@@ -113,18 +113,23 @@ export function SiteMenu({ isOpen, view, onViewChange, onClose }: SiteMenuProps)
                   </a>
                 </li>
                 <li style={itemStyle(1, isMainVisible)} className="transition duration-500 ease-out">
-                  <a href="/blog" tabIndex={mainTabIndex} onClick={(event) => handleNavigate(event, '/blog')} className={menuItemClassName}>
-                    <MenuItemContent label={t('blog')} index={1} />
+                  <a href="/about" tabIndex={mainTabIndex} onClick={(event) => handleNavigate(event, '/about')} className={menuItemClassName}>
+                    <MenuItemContent label={t('about')} index={1} />
                   </a>
                 </li>
                 <li style={itemStyle(2, isMainVisible)} className="transition duration-500 ease-out">
+                  <a href="/blog" tabIndex={mainTabIndex} onClick={(event) => handleNavigate(event, '/blog')} className={menuItemClassName}>
+                    <MenuItemContent label={t('blog')} index={2} />
+                  </a>
+                </li>
+                <li style={itemStyle(3, isMainVisible)} className="transition duration-500 ease-out">
                   <button type="button" tabIndex={mainTabIndex} onClick={() => onViewChange('contact')} className={menuItemClassName}>
-                    <MenuItemContent label={t('contact')} index={2} />
+                    <MenuItemContent label={t('contact')} index={3} />
                   </button>
                 </li>
               </ul>
 
-              <ul className="mt-10 flex gap-6 md:mt-14 md:gap-8" style={itemStyle(3, isMainVisible)}>
+              <ul className="mt-10 flex gap-6 md:mt-14 md:gap-8" style={itemStyle(4, isMainVisible)}>
                 {socialLinks.map((link) => (
                   <li key={link.label}>
                     <a href={link.href} target="_blank" rel="noreferrer" tabIndex={mainTabIndex} className={smallLinkClassName}>
@@ -137,7 +142,7 @@ export function SiteMenu({ isOpen, view, onViewChange, onClose }: SiteMenuProps)
                 ))}
               </ul>
 
-              <ul className="mt-6 flex gap-6 font-mono text-[0.62rem] uppercase tracking-[0.24em] text-ash/50 md:mt-8" style={itemStyle(4, isMainVisible)}>
+              <ul className="mt-6 flex gap-6 font-mono text-[0.62rem] uppercase tracking-[0.24em] text-ash/50 md:mt-8" style={itemStyle(5, isMainVisible)}>
                 <li>
                   <a href="/privacy-policy" tabIndex={mainTabIndex} onClick={(event) => handleNavigate(event, '/privacy-policy')} className="transition hover:text-ash">
                     {t('privacyPolicy')}

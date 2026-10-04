@@ -1,24 +1,26 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import { useLanguage, type TranslationKey } from '@/components/i18n/language';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { SiteHeader } from '@/components/layout/site-header';
 
-type LegalSection = {
+type TextSection = {
   titleKey?: TranslationKey;
   paragraphKeys: TranslationKey[];
 };
 
-type LegalPageProps = {
+type TextPageProps = {
   titleKey: TranslationKey;
   subtitleKey?: TranslationKey;
   introKey?: TranslationKey;
-  sections: LegalSection[];
+  sections: TextSection[];
+  children?: ReactNode;
 };
 
 // "Label: text" sentences get a bold label, like a definition list.
 function Paragraph({ text }: { text: string }) {
-  const match = /^([^:]{3,48}):\s(.+)$/.exec(text);
+  const match = /^([^:]{3,64}):\s(.+)$/.exec(text);
 
   if (!match) {
     return <p>{text}</p>;
@@ -31,9 +33,9 @@ function Paragraph({ text }: { text: string }) {
   );
 }
 
-// Text pages (privacy and AI policy) laid out like the fullscreen menu: same margins, a big uppercase title,
-// a muted intro and numbered sections.
-export function LegalPage({ titleKey, subtitleKey, introKey, sections }: LegalPageProps) {
+// Text pages (about, privacy and AI policy) laid out like the fullscreen menu: same margins, a big uppercase
+// title, a muted intro and numbered sections, optionally followed by extra content such as a download link.
+export function TextPage({ titleKey, subtitleKey, introKey, sections, children }: TextPageProps) {
   const { t } = useLanguage();
 
   return (
@@ -81,6 +83,8 @@ export function LegalPage({ titleKey, subtitleKey, introKey, sections }: LegalPa
             </li>
           ))}
         </ol>
+
+        {children}
       </article>
 
       <SiteFooter />

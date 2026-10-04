@@ -7,7 +7,7 @@ import { AUTHOR } from '@/lib/site';
 export const dimmableClassName =
   'menu-link transition-opacity duration-300 group-has-[.menu-link:hover]/nav:opacity-30 hover:!opacity-100 focus-visible:!opacity-100';
 
-export const menuItemClassName = `group/item flex w-fit items-center text-left text-[clamp(2.5rem,7vw,5.5rem)] font-bold uppercase leading-[0.95] tracking-[-0.06em] text-ash ${dimmableClassName}`;
+export const menuItemClassName = `group/item flex w-fit items-center text-left text-[clamp(3rem,7vw,5.5rem)] font-bold uppercase leading-[0.95] tracking-[-0.06em] text-ash ${dimmableClassName}`;
 
 export const smallLinkClassName = `text-[clamp(1.1rem,2vw,1.5rem)] font-bold uppercase tracking-[-0.03em] text-ash ${dimmableClassName}`;
 

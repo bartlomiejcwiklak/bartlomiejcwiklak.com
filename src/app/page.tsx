@@ -10,7 +10,10 @@ import { projects } from '@/data/projects';
 
 const SCROLL_EASING = 0.11;
 const SCROLL_STOP_THRESHOLD = 0.05;
-const TOUCH_SCROLL_MULTIPLIER = 1.2;
+// How far (in ms of the release speed) a flick keeps the gallery moving after the finger lifts.
+const TOUCH_MOMENTUM = 320;
+// A flick only counts if the finger was still moving this recently (ms) when it lifted.
+const TOUCH_RELEASE_WINDOW = 100;
 const AUTO_SCROLL_SPEED = 0.018;
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 
@@ -124,7 +127,6 @@ export default function HomePage() {
   const animationFrameRef = useRef<number | null>(null);
   const isAnimatingRef = useRef(false);
   const isProjectOpeningRef = useRef(false);
-  const touchStartRef = useRef<number | null>(null);
   const lastFrameTimeRef = useRef<number | null>(null);
   const currentOffsetRef = useRef(0);
   const targetOffsetRef = useRef(0);
@@ -326,14 +328,85 @@ export default function HomePage() {
     }
   }, [isMenuOpen]);
 
-  const nudge = (delta: number) => {
-    if (isMenuOpen || isProjectOpeningRef.current) {
+  // Wheel and touch input drive the gallery directly. These listeners are registered as non-passive (React
+  // makes them passive), so preventDefault really stops the browser from scrolling or bouncing the page.
+  useEffect(() => {
+    const gallery = galleryRef.current;
+
+    if (!gallery) {
       return;
     }
 
-    targetOffsetRef.current += delta;
-    startAnimation();
-  };
+    let lastY: number | null = null;
+    let lastTime = 0;
+    let velocity = 0;
+
+    const canScroll = () => !isMenuOpenRef.current && !isProjectOpeningRef.current;
+
+    const handleWheel = (event: WheelEvent) => {
+      event.preventDefault();
+
+      if (!canScroll()) {
+        return;
+      }
+
+      targetOffsetRef.current += event.deltaY;
+      startAnimation();
+    };
+
+    const handleTouchStart = (event: TouchEvent) => {
+      lastY = event.touches[0]?.clientY ?? null;
+      lastTime = event.timeStamp;
+      velocity = 0;
+    };
+
+    const handleTouchMove = (event: TouchEvent) => {
+      event.preventDefault();
+
+      const currentY = event.touches[0]?.clientY;
+
+      if (currentY === undefined || lastY === null || !canScroll()) {
+        return;
+      }
+
+      const delta = lastY - currentY;
+      const elapsed = Math.max(event.timeStamp - lastTime, 1);
+      velocity = 0.8 * (delta / elapsed) + 0.2 * velocity;
+
+      // Follow the finger 1:1 instead of easing towards it, so dragging never lags behind.
+      targetOffsetRef.current += delta;
+      currentOffsetRef.current += delta;
+      applyTrackTransform();
+      startAnimation();
+
+      lastY = currentY;
+      lastTime = event.timeStamp;
+    };
+
+    const handleTouchEnd = (event: TouchEvent) => {
+      // Fling: push the target further in the direction of travel; the easing loop then decelerates smoothly.
+      if (lastY !== null && canScroll() && event.timeStamp - lastTime < TOUCH_RELEASE_WINDOW) {
+        targetOffsetRef.current += velocity * TOUCH_MOMENTUM;
+        startAnimation();
+      }
+
+      lastY = null;
+    };
+
+    gallery.addEventListener('wheel', handleWheel, { passive: false });
+    gallery.addEventListener('touchstart', handleTouchStart, { passive: true });
+    gallery.addEventListener('touchmove', handleTouchMove, { passive: false });
+    gallery.addEventListener('touchend', handleTouchEnd);
+    gallery.addEventListener('touchcancel', handleTouchEnd);
+
+    return () => {
+      gallery.removeEventListener('wheel', handleWheel);
+      gallery.removeEventListener('touchstart', handleTouchStart);
+      gallery.removeEventListener('touchmove', handleTouchMove);
+      gallery.removeEventListener('touchend', handleTouchEnd);
+      gallery.removeEventListener('touchcancel', handleTouchEnd);
+    };
+  }, []);
 
   const openProject = (project: (typeof projects)[number]) => {
     if (isProjectOpeningRef.current) {
@@ -353,30 +426,7 @@ export default function HomePage() {
 
       <div
         ref={galleryRef}
-        className="scrollbar-none h-full overflow-hidden overscroll-none"
-        onWheel={(event) => {
-          event.preventDefault();
-          nudge(event.deltaY);
-        }}
-        onTouchStart={(event) => {
-          touchStartRef.current = event.touches[0]?.clientY ?? null;
-        }}
-        onTouchMove={(event) => {
-          event.preventDefault();
-
-          const currentY = event.touches[0]?.clientY;
-          const previousY = touchStartRef.current;
-
-          if (currentY === undefined || previousY === null) {
-            return;
-          }
-
-          nudge((previousY - currentY) * TOUCH_SCROLL_MULTIPLIER);
-          touchStartRef.current = currentY;
-        }}
-        onTouchEnd={() => {
-          touchStartRef.current = null;
-        }}
+        className="scrollbar-none h-full touch-none overflow-hidden overscroll-none"
       >
         <div ref={trackRef} className="will-change-transform">
           {loopedProjects.map((projectGroup, groupIndex) => (

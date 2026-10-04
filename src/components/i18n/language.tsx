@@ -21,7 +21,28 @@ export type TranslationKey =
   | 'fallbackDetails'
   | 'projectVisualArchive'
   | 'aboutProject'
+  | 'previous'
+  | 'next'
+  | 'openImage'
   | 'work'
+  | 'about'
+  | 'aboutSubtitle'
+  | 'aboutIntro'
+  | 'aboutWhatTitle'
+  | 'aboutWhatP1'
+  | 'aboutWhatP2'
+  | 'aboutExpTitle'
+  | 'aboutExpP1'
+  | 'aboutEduTitle'
+  | 'aboutEduP1'
+  | 'aboutEduP2'
+  | 'aboutToolsTitle'
+  | 'aboutToolsP1'
+  | 'aboutToolsP2'
+  | 'aboutToolsP3'
+  | 'aboutToolsP4'
+  | 'aboutToolsP5'
+  | 'downloadCv'
   | 'menuIntro'
   | 'contactTitle'
   | 'contactLead'
@@ -74,7 +95,28 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     fallbackDetails: 'More case study details, process notes and production context will be added as this project archive grows.',
     projectVisualArchive: 'Project visual archive',
     aboutProject: 'About the project',
+    previous: 'Previous image',
+    next: 'Next image',
+    openImage: 'Open image preview',
     work: 'Work',
+    about: 'About',
+    aboutSubtitle: 'Graphic designer and web developer from Łódź.',
+    aboutIntro: 'I combine a designer’s eye with a programmer’s background. Since 2021 I have been designing visual identities and marketing materials, and I take websites from the first sketch all the way to code.',
+    aboutWhatTitle: 'What I do',
+    aboutWhatP1: 'Graphic design and branding: visual identities, posters, book covers, flyers and social media ads.',
+    aboutWhatP2: 'Websites: design and development of company websites, landing pages and online stores, built with modern tools such as React and Tailwind CSS.',
+    aboutExpTitle: 'Experience',
+    aboutExpP1: 'Fiverr / freelance (since August 2021): graphic design and branding – marketing and advertising materials for international clients, from the brief and visual direction to final files, often on tight deadlines.',
+    aboutEduTitle: 'Education',
+    aboutEduP1: 'Lodz University of Technology (2024 – present): Computer Science in the English-taught programme of the International Faculty of Engineering (IFE).',
+    aboutEduP2: 'Technical school of electronics in Radom (2019 – 2024): IT technician with the national qualifications INF.03 (websites and databases) and INF.04 (application design and development).',
+    aboutToolsTitle: 'Tools',
+    aboutToolsP1: 'Design: Adobe Photoshop, InDesign.',
+    aboutToolsP2: 'Video and audio: Premiere Pro, Vegas Pro, FL Studio, Ableton Live.',
+    aboutToolsP3: 'Web: HTML, CSS, JavaScript, TypeScript, React, Next.js, Angular, Vite, Tailwind CSS, PHP, SQL.',
+    aboutToolsP4: 'Programming: C, C++, C#, Java, Python.',
+    aboutToolsP5: 'Languages: English at C2 level (Cambridge Certificate in Advanced English, 98%).',
+    downloadCv: 'Download CV (PDF)',
     contactTitle: 'Let’s talk about your project.',
     contactLead: 'Send me an email or book a short call, whichever is easier for you.',
     back: 'Back',
@@ -124,7 +166,28 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
     fallbackDetails: 'Więcej szczegółów case study, notatek z procesu i kontekstu produkcyjnego pojawi się wraz z rozwojem archiwum projektów.',
     projectVisualArchive: 'Archiwum wizualne projektu',
     aboutProject: 'O projekcie',
+    previous: 'Poprzednie zdjęcie',
+    next: 'Następne zdjęcie',
+    openImage: 'Otwórz podgląd zdjęcia',
     work: 'Projekty',
+    about: 'O mnie',
+    aboutSubtitle: 'Projektant graficzny i web developer z Łodzi.',
+    aboutIntro: 'Łączę oko projektanta z zapleczem programisty. Od 2021 roku projektuję identyfikacje wizualne i materiały marketingowe, a strony internetowe prowadzę od pierwszego szkicu aż po kod.',
+    aboutWhatTitle: 'Co robię',
+    aboutWhatP1: 'Projektowanie graficzne i branding: identyfikacje wizualne, plakaty, okładki książek, ulotki i reklamy w social mediach.',
+    aboutWhatP2: 'Strony internetowe: projekt i wdrożenie stron firmowych, landing page’y i sklepów internetowych z użyciem nowoczesnych narzędzi, takich jak React i Tailwind CSS.',
+    aboutExpTitle: 'Doświadczenie',
+    aboutExpP1: 'Fiverr / freelance (od sierpnia 2021): projektowanie graficzne i branding – materiały marketingowe i reklamowe dla klientów z całego świata, od briefu i kierunku wizualnego po gotowe pliki, często pod presją czasu.',
+    aboutEduTitle: 'Wykształcenie',
+    aboutEduP1: 'Politechnika Łódzka (od 2024): informatyka w anglojęzycznym programie International Faculty of Engineering (IFE).',
+    aboutEduP2: 'Zespół Szkół Elektronicznych w Radomiu (2019–2024): technik programista z kwalifikacjami INF.03 (strony internetowe i bazy danych) oraz INF.04 (projektowanie i programowanie aplikacji).',
+    aboutToolsTitle: 'Narzędzia',
+    aboutToolsP1: 'Design: Adobe Photoshop, InDesign.',
+    aboutToolsP2: 'Wideo i audio: Premiere Pro, Vegas Pro, FL Studio, Ableton Live.',
+    aboutToolsP3: 'Web: HTML, CSS, JavaScript, TypeScript, React, Next.js, Angular, Vite, Tailwind CSS, PHP, SQL.',
+    aboutToolsP4: 'Programowanie: C, C++, C#, Java, Python.',
+    aboutToolsP5: 'Języki: angielski na poziomie C2 (Cambridge Certificate in Advanced English, 98%).',
+    downloadCv: 'Pobierz CV (PDF)',
     contactTitle: 'Porozmawiajmy o Twoim projekcie.',
     contactLead: 'Napisz maila albo umów krótką rozmowę – jak Ci wygodniej.',
     back: 'Wróć',

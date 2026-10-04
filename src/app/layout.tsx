@@ -157,7 +157,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${dmSans.variable} ${robotoMono.variable} bg-ash font-sans text-ink antialiased`}>
+      <body className={`${dmSans.variable} ${robotoMono.variable} bg-ink font-sans text-ash antialiased`}>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: toJsonLd(structuredData) }} />
         <LanguageProvider>
           {children}

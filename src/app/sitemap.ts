@@ -16,6 +16,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8
     })),
     {
+      url: `${SITE_URL}/about`,
+      priority: 0.7
+    },
+    {
       url: `${SITE_URL}/blog`,
       lastModified: posts[0] ? new Date(posts[0].updated ?? posts[0].date) : undefined,
       priority: 0.8

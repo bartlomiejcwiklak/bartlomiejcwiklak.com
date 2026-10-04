@@ -27,13 +27,18 @@ export function SiteFooter() {
               </PageTransitionLink>
             </li>
             <li>
+              <PageTransitionLink href="/about" className={menuItemClassName}>
+                <MenuItemContent label={t('about')} index={1} />
+              </PageTransitionLink>
+            </li>
+            <li>
               <PageTransitionLink href="/blog" className={menuItemClassName}>
-                <MenuItemContent label={t('blog')} index={1} />
+                <MenuItemContent label={t('blog')} index={2} />
               </PageTransitionLink>
             </li>
             <li>
               <button type="button" onClick={openContactMenu} className={menuItemClassName}>
-                <MenuItemContent label={t('contact')} index={2} />
+                <MenuItemContent label={t('contact')} index={3} />
               </button>
             </li>
           </ul>

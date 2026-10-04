@@ -16,6 +16,13 @@
 html {
   height: 100%;
   scroll-behavior: smooth;
+  background: rgb(var(--color-ink));
+}
+
+/* No rubber-band bounce at the top and bottom of the page (Safari on macOS and iOS). */
+html,
+body {
+  overscroll-behavior: none;
 }
 
 body {

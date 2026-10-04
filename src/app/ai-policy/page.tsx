@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { LegalPage } from '@/components/layout/legal-page';
+import { TextPage } from '@/components/layout/text-page';
 
 export const metadata: Metadata = {
   title: 'Polityka AI',
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function AiPolicyPage() {
   return (
-    <LegalPage
+    <TextPage
       titleKey="aiPolicy"
       subtitleKey="aiTitle"
       introKey="aiIntro"

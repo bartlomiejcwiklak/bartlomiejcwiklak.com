@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { LegalPage } from '@/components/layout/legal-page';
+import { TextPage } from '@/components/layout/text-page';
 
 export const metadata: Metadata = {
   title: 'Polityka prywatności',
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPolicyPage() {
   return (
-    <LegalPage
+    <TextPage
       titleKey="privacyTitle"
       sections={[
         { titleKey: 'privacyH1', paragraphKeys: ['privacyP1'] },
