@@ -2,15 +2,19 @@ import type { Metadata } from 'next';
 import { LocalizedText } from '@/components/i18n/language';
 import { TextPage } from '@/components/layout/text-page';
 import { ExternalArrowIcon } from '@/components/navigation/menu-items';
+import { getAlternates } from '@/lib/i18n';
 
-export const metadata: Metadata = {
-  title: 'O mnie',
-  description:
-    'Bartłomiej Ćwiklak – projektant graficzny i web developer z Łodzi. Branding, projektowanie graficzne i strony internetowe od 2021 roku.',
-  alternates: {
-    canonical: '/about'
-  }
-};
+export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
+  const isPolish = params.lang !== 'en';
+
+  return {
+    title: isPolish ? 'O mnie' : 'About',
+    description: isPolish
+      ? 'Bartłomiej Ćwiklak – projektant graficzny i web developer z Łodzi. Branding, projektowanie graficzne i strony internetowe od 2021 roku.'
+      : 'Bartłomiej Ćwiklak – graphic designer and web developer from Łódź. Branding, graphic design and websites since 2021.',
+    alternates: getAlternates('/about', isPolish ? 'pl' : 'en')
+  };
+}
 
 export default function AboutPage() {
   return (

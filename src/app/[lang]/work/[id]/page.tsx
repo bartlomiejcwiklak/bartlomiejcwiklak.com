@@ -5,10 +5,12 @@ import { SiteHeader } from '@/components/layout/site-header';
 import { LocalizedProjectDetails } from '@/components/project/localized-project-details';
 import { ProjectTags } from '@/components/project/project-tags';
 import { projects } from '@/data/projects';
+import { getAlternates } from '@/lib/i18n';
 import { getThemeStyle } from '@/lib/theme';
 
 type ProjectPageProps = {
   params: {
+    lang: string;
     id: string;
   };
 };
@@ -24,19 +26,21 @@ export function generateMetadata({ params }: ProjectPageProps): Metadata {
     return {};
   }
 
+  const isPolish = params.lang !== 'en';
   // Web projects get the Polish service phrase in the title to rank for local web design searches.
-  const title = project.category === 'Web Design' ? `${project.title} – projekt strony internetowej` : project.title;
+  const title = isPolish && project.category === 'Web Design' ? `${project.title} – projekt strony internetowej` : project.title;
+  const description = isPolish ? project.pl?.description ?? project.description : project.description;
+  const alternates = getAlternates(`/work/${project.id}`, isPolish ? 'pl' : 'en');
 
   return {
     title,
-    description: project.description,
-    alternates: {
-      canonical: `/work/${project.id}`
-    },
+    description,
+    alternates,
     openGraph: {
       title: `${title} | Bartłomiej Ćwiklak`,
-      description: project.description,
-      url: `/work/${project.id}`,
+      description,
+      url: alternates.canonical,
+      locale: isPolish ? 'pl_PL' : 'en_US',
       images: [
         {
           url: project.posterUrl ?? project.imageUrl,

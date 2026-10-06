@@ -38,7 +38,7 @@ function usePageThemeStyle() {
 // The stroked version stays readable over light and dark images, and takes its colours from the current
 // page's theme (see src/lib/theme.ts).
 export function FixedLogo() {
-  const { t } = useLanguage();
+  const { localize, t } = useLanguage();
   const isFooterVisible = useIsFooterVisible();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isHidden = isFooterVisible && !isMenuOpen;
@@ -62,7 +62,7 @@ export function FixedLogo() {
         isHidden ? 'pointer-events-none opacity-0' : 'opacity-100'
       }`}
     >
-      <PageTransitionLink href="/" className="project-entry flex items-center" ariaLabel={t('backToPortfolio')}>
+      <PageTransitionLink href={localize('/')} className="project-entry flex items-center" ariaLabel={t('backToPortfolio')}>
         {/* Outline in the page background colour, fill in the page text colour; both fade to a new page's theme.
             Drawn as SVG masks: with two stacked CSS mask-image layers, iOS Safari dropped the fill layer. */}
         <svg role="img" aria-label="Bartłomiej Ćwiklak logo" viewBox="0 0 480 321" className="block aspect-[480/321] h-10 md:h-12" style={themeStyle}>

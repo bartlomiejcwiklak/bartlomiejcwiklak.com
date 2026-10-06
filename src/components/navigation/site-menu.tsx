@@ -22,7 +22,7 @@ type SiteMenuProps = {
 // Fullscreen navigation hub layered just below the fixed logo and menu button, so those never move.
 // Contact is a second view inside the menu: the main content slides up and away while contact slides in.
 export function SiteMenu({ isOpen, view, onViewChange, onClose }: SiteMenuProps) {
-  const { t } = useLanguage();
+  const { localize, t } = useLanguage();
 
   useEffect(() => {
     if (!isOpen) {
@@ -108,17 +108,17 @@ export function SiteMenu({ isOpen, view, onViewChange, onClose }: SiteMenuProps)
             <nav className="group/nav flex flex-1 flex-col justify-center py-8">
               <ul className="grid justify-items-start gap-1 md:gap-2">
                 <li style={itemStyle(0, isMainVisible)} className="transition duration-500 ease-out">
-                  <a href="/" tabIndex={mainTabIndex} onClick={(event) => handleNavigate(event, '/')} className={menuItemClassName}>
+                  <a href={localize('/')} tabIndex={mainTabIndex} onClick={(event) => handleNavigate(event, localize('/'))} className={menuItemClassName}>
                     <MenuItemContent label={t('work')} index={0} />
                   </a>
                 </li>
                 <li style={itemStyle(1, isMainVisible)} className="transition duration-500 ease-out">
-                  <a href="/about" tabIndex={mainTabIndex} onClick={(event) => handleNavigate(event, '/about')} className={menuItemClassName}>
+                  <a href={localize('/about')} tabIndex={mainTabIndex} onClick={(event) => handleNavigate(event, localize('/about'))} className={menuItemClassName}>
                     <MenuItemContent label={t('about')} index={1} />
                   </a>
                 </li>
                 <li style={itemStyle(2, isMainVisible)} className="transition duration-500 ease-out">
-                  <a href="/blog" tabIndex={mainTabIndex} onClick={(event) => handleNavigate(event, '/blog')} className={menuItemClassName}>
+                  <a href={localize('/blog')} tabIndex={mainTabIndex} onClick={(event) => handleNavigate(event, localize('/blog'))} className={menuItemClassName}>
                     <MenuItemContent label={t('blog')} index={2} />
                   </a>
                 </li>
@@ -144,12 +144,12 @@ export function SiteMenu({ isOpen, view, onViewChange, onClose }: SiteMenuProps)
 
               <ul className="mt-6 flex gap-6 font-mono text-[0.62rem] uppercase tracking-[0.24em] text-ash/50 md:mt-8" style={itemStyle(5, isMainVisible)}>
                 <li>
-                  <a href="/privacy-policy" tabIndex={mainTabIndex} onClick={(event) => handleNavigate(event, '/privacy-policy')} className="transition hover:text-ash">
+                  <a href={localize('/privacy-policy')} tabIndex={mainTabIndex} onClick={(event) => handleNavigate(event, localize('/privacy-policy'))} className="transition hover:text-ash">
                     {t('privacyPolicy')}
                   </a>
                 </li>
                 <li>
-                  <a href="/ai-policy" tabIndex={mainTabIndex} onClick={(event) => handleNavigate(event, '/ai-policy')} className="transition hover:text-ash">
+                  <a href={localize('/ai-policy')} tabIndex={mainTabIndex} onClick={(event) => handleNavigate(event, localize('/ai-policy'))} className="transition hover:text-ash">
                     {t('aiPolicy')}
                   </a>
                 </li>

@@ -5,36 +5,52 @@ import { SiteHeader } from '@/components/layout/site-header';
 import { ArrowIcon, dimmableClassName } from '@/components/navigation/menu-items';
 import { PageTransitionLink } from '@/components/navigation/page-transition';
 import { formatPostDate, getAllPosts } from '@/lib/blog';
+import { getAlternates, localizePath, type Language } from '@/lib/i18n';
 import { AUTHOR, SITE_URL, toJsonLd } from '@/lib/site';
 
 const BLOG_DESCRIPTION =
   'Articles by Bartlomiej Cwiklak on graphic design, visual identity, web development and the process behind client projects.';
 
-export const metadata: Metadata = {
-  title: 'Blog',
-  description: BLOG_DESCRIPTION,
-  alternates: {
-    canonical: '/blog',
-    types: {
-      'application/rss+xml': [{ url: '/blog/rss.xml', title: 'Bartlomiej Cwiklak Blog' }]
-    }
-  },
-  openGraph: {
-    title: 'Blog | Bartlomiej Cwiklak',
-    description: BLOG_DESCRIPTION,
-    url: '/blog',
-    type: 'website'
-  }
+const BLOG_DESCRIPTION_PL =
+  'Artykuły Bartłomieja Ćwiklaka o projektowaniu graficznym, identyfikacji wizualnej, tworzeniu stron internetowych i kulisach projektów.';
+
+type BlogPageProps = {
+  params: { lang: string };
 };
 
-export default function BlogPage() {
+export function generateMetadata({ params }: BlogPageProps): Metadata {
+  const language: Language = params.lang === 'en' ? 'en' : 'pl';
+  const alternates = getAlternates('/blog', language);
+  const description = language === 'pl' ? BLOG_DESCRIPTION_PL : BLOG_DESCRIPTION;
+
+  return {
+    title: 'Blog',
+    description,
+    alternates: {
+      ...alternates,
+      types: {
+        'application/rss+xml': [{ url: '/blog/rss.xml', title: 'Bartlomiej Cwiklak Blog' }]
+      }
+    },
+    openGraph: {
+      title: 'Blog | Bartlomiej Cwiklak',
+      description,
+      url: alternates.canonical,
+      type: 'website'
+    }
+  };
+}
+
+export default function BlogPage({ params }: BlogPageProps) {
+  const language: Language = params.lang === 'en' ? 'en' : 'pl';
   const posts = getAllPosts();
+  const blogUrl = `${SITE_URL}${localizePath('/blog', language)}`;
 
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'Blog',
-    '@id': `${SITE_URL}/blog`,
-    url: `${SITE_URL}/blog`,
+    '@id': blogUrl,
+    url: blogUrl,
     name: 'Bartlomiej Cwiklak Blog',
     description: BLOG_DESCRIPTION,
     author: { '@type': 'Person', name: AUTHOR.name, url: AUTHOR.url },
@@ -42,7 +58,7 @@ export default function BlogPage() {
       '@type': 'BlogPosting',
       headline: post.title,
       description: post.description,
-      url: `${SITE_URL}/blog/${post.slug}`,
+      url: `${SITE_URL}${localizePath(`/blog/${post.slug}`, post.lang)}`,
       datePublished: post.date,
       dateModified: post.updated ?? post.date,
       inLanguage: post.lang
@@ -77,7 +93,7 @@ export default function BlogPage() {
               <li key={post.slug} className="border-b border-line/20">
                 <article lang={post.lang}>
                   <PageTransitionLink
-                    href={`/blog/${post.slug}`}
+                    href={localizePath(`/blog/${post.slug}`, post.lang)}
                     className={`group/item grid gap-5 py-10 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:gap-16 md:py-14 ${dimmableClassName}`}
                   >
                     <div className="flex flex-wrap gap-x-5 gap-y-2 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-ash/50 md:grid md:content-start md:gap-3 md:text-xs">

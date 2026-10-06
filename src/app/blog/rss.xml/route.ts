@@ -1,4 +1,5 @@
 import { getAllPosts } from '@/lib/blog';
+import { localizePath } from '@/lib/i18n';
 import { AUTHOR, SITE_URL } from '@/lib/site';
 
 export const dynamic = 'force-static';
@@ -12,7 +13,7 @@ export function GET() {
 
   const items = posts
     .map((post) => {
-      const url = `${SITE_URL}/blog/${post.slug}`;
+      const url = `${SITE_URL}${localizePath(`/blog/${post.slug}`, post.lang)}`;
 
       return `    <item>
       <title>${escapeXml(post.title)}</title>

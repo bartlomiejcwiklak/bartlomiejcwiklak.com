@@ -7,29 +7,34 @@ import { SiteHeader } from '@/components/layout/site-header';
 import { ArrowIcon } from '@/components/navigation/menu-items';
 import { PageTransitionLink } from '@/components/navigation/page-transition';
 import { formatPostDate, getAllPosts, getPost } from '@/lib/blog';
+import { localizePath } from '@/lib/i18n';
 import { AUTHOR, SITE_NAME, SITE_URL, toJsonLd } from '@/lib/site';
 import { getThemeStyle } from '@/lib/theme';
 
 type PostPageProps = {
   params: {
+    lang: string;
     slug: string;
   };
 };
 
 export const dynamicParams = false;
 
-export function generateStaticParams() {
-  return getAllPosts().map((post) => ({ slug: post.slug }));
+// Each post exists only in the language it is written in.
+export function generateStaticParams({ params }: { params: { lang: string } }) {
+  return getAllPosts()
+    .filter((post) => post.lang === params.lang)
+    .map((post) => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
   const post = await getPost(params.slug);
 
-  if (!post) {
+  if (!post || post.lang !== params.lang) {
     return {};
   }
 
-  const url = `/blog/${post.slug}`;
+  const url = localizePath(`/blog/${post.slug}`, post.lang);
 
   return {
     title: post.title,
@@ -68,11 +73,13 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
 export default async function PostPage({ params }: PostPageProps) {
   const post = await getPost(params.slug);
 
-  if (!post) {
+  if (!post || post.lang !== params.lang) {
     notFound();
   }
 
-  const url = `${SITE_URL}/blog/${post.slug}`;
+  const homeUrl = `${SITE_URL}${localizePath('/', post.lang)}`;
+  const blogPath = localizePath('/blog', post.lang);
+  const url = `${SITE_URL}${localizePath(`/blog/${post.slug}`, post.lang)}`;
 
   const structuredData = [
     {
@@ -97,14 +104,14 @@ export default async function PostPage({ params }: PostPageProps) {
         sameAs: AUTHOR.sameAs
       },
       publisher: { '@type': 'Person', name: AUTHOR.name, url: AUTHOR.url },
-      isPartOf: { '@type': 'Blog', '@id': `${SITE_URL}/blog` }
+      isPartOf: { '@type': 'Blog', '@id': `${SITE_URL}${blogPath}` }
     },
     {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
-        { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog` },
+        { '@type': 'ListItem', position: 1, name: 'Home', item: homeUrl },
+        { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}${blogPath}` },
         { '@type': 'ListItem', position: 3, name: post.title, item: url }
       ]
     }
@@ -121,7 +128,7 @@ export default async function PostPage({ params }: PostPageProps) {
         <header className="max-w-5xl">
           <nav aria-label="Breadcrumb" className="project-entry">
             <PageTransitionLink
-              href="/blog"
+              href={blogPath}
               className="flex w-fit items-center gap-3 font-mono text-[0.68rem] uppercase tracking-[0.24em] text-ash/72 transition hover:text-ash"
             >
               <ArrowIcon className="h-3.5 w-3.5 rotate-180" />
@@ -184,7 +191,7 @@ export default async function PostPage({ params }: PostPageProps) {
 
         <div className="mt-16 border-t border-line/20 pt-8 md:mt-24">
           <PageTransitionLink
-            href="/blog"
+            href={blogPath}
             className="flex w-fit items-center gap-3 font-mono text-[0.68rem] uppercase tracking-[0.24em] text-ash/72 transition hover:text-ash"
           >
             <ArrowIcon className="h-3.5 w-3.5 rotate-180" />

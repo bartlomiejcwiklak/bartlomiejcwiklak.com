@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useLanguage } from '@/components/i18n/language';
 import { SiteHeader } from '@/components/layout/site-header';
 import { ProjectMedia } from '@/components/media/project-media';
 import { navigateWithTransition } from '@/components/navigation/page-transition';
@@ -74,10 +75,11 @@ function ProjectCard({
   onOpen: (project: (typeof projects)[number]) => void;
 }) {
   const { id, title, year, imageUrl, mediaType, posterUrl, galleryThumbUrl } = project;
+  const { localize } = useLanguage();
 
   return (
     <Link
-      href={`/work/${id}`}
+      href={localize(`/work/${id}`)}
       data-project-id={id}
       data-project-title={title}
       onClick={(event) => {
@@ -122,6 +124,7 @@ function ProjectCard({
 }
 
 export default function HomePage() {
+  const { localize } = useLanguage();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const galleryRef = useRef<HTMLDivElement>(null);
   const segmentRef = useRef<HTMLDivElement>(null);
@@ -417,7 +420,7 @@ export default function HomePage() {
 
     isProjectOpeningRef.current = true;
     stopAnimation();
-    navigateWithTransition(`/work/${project.id}`);
+    navigateWithTransition(localize(`/work/${project.id}`));
   };
 
   return (
