@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { SiteHeader } from '@/components/layout/site-header';
 import { ProjectMedia } from '@/components/media/project-media';
 import { navigateWithTransition } from '@/components/navigation/page-transition';
-import { GalleryCursorLabel } from '@/components/project/gallery-cursor-label';
+import { GalleryHoverTitle } from '@/components/project/gallery-hover-title';
 import { projects } from '@/data/projects';
 
 const SCROLL_EASING = 0.11;
@@ -99,13 +99,13 @@ function ProjectCard({
             mediaType={galleryThumbUrl ? 'gif' : mediaType}
             posterUrl={posterUrl}
             sizes="(min-width: 1280px) 20vw, (min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
-            // Highlighted via data-hovered (set by GalleryCursorLabel) rather than :hover, which browsers don't
+            // Highlighted via data-hovered (set by GalleryHoverTitle) rather than :hover, which browsers don't
             // update while the gallery moves under a still cursor.
             className="aspect-square w-full object-cover brightness-90 transition duration-500 group-data-[hovered=true]:scale-[1.02] group-data-[hovered=true]:brightness-100"
             priority={id === projects[0]?.id}
           />
 
-          {/* With a mouse the title follows the cursor instead (GalleryCursorLabel); touch devices keep it on the card. */}
+          {/* With a mouse the title shows next to the logo instead (GalleryHoverTitle); touch devices keep it on the card. */}
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/18 [@media(hover:hover)_and_(pointer:fine)]:hidden" />
 
           <span className="pointer-events-none absolute right-3 top-3 [@media(hover:hover)_and_(pointer:fine)]:hidden font-mono text-[0.58rem] uppercase tracking-[0.22em] text-ash md:text-[0.62rem]">
@@ -424,7 +424,7 @@ export default function HomePage() {
     <main className="fixed inset-0 overflow-hidden bg-ink text-ash">
       <SiteHeader onMenuOpenChange={setIsMenuOpen} />
 
-      <GalleryCursorLabel containerRef={galleryRef} />
+      <GalleryHoverTitle containerRef={galleryRef} />
 
       <div
         ref={galleryRef}
