@@ -50,7 +50,8 @@ function getLocalizedProject(project: Project, language: Language) {
   return {
     ...project,
     description: project.pl.description,
-    content: project.pl.content ?? project.content
+    content: project.pl.content ?? project.content,
+    note: project.pl.note ?? project.note
   };
 }
 
@@ -139,6 +140,10 @@ export function LocalizedProjectDetails({ project }: { project: Project }) {
           </figure>
         ))}
       </section>
+
+      {localizedProject.note ? (
+        <p className="mt-14 max-w-2xl border-t border-line/20 pt-8 text-sm leading-6 text-ash/50 md:mt-20">{localizedProject.note}</p>
+      ) : null}
 
       <ImageLightbox images={lightboxImages} index={lightboxIndex} onIndexChange={setLightboxIndex} />
     </>

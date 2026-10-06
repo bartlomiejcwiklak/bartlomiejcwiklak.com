@@ -9,6 +9,7 @@ export type ContentBlock =
 export interface ProjectTranslation {
   description: string;
   content?: ContentBlock[];
+  note?: string;
 }
 
 export interface Project {
@@ -21,12 +22,58 @@ export interface Project {
   posterUrl?: string;
   description: string;
   content?: ContentBlock[];
+  // Optional small print shown at the very end of the project page, e.g. a disclaimer.
+  note?: string;
   pl?: ProjectTranslation;
   // Optional page colors, e.g. { background: '#F3F1E8', text: '#0B0B0B' }.
   theme?: PageTheme;
 }
 
 export const projects: Project[] = [
+  {
+    id: 'ziarno',
+    title: 'ZIARNO',
+    year: '2026',
+    category: 'Graphic Design',
+    imageUrl: '/videos/ziarno.mp4',
+    mediaType: 'video',
+    theme: { background: '#EFA00B', text: '#591F0A' },
+    posterUrl: '/images/optimized/ziarno-1.webp',
+    description: 'Visual identity for Ziarno, a Polish brand of flavoured coffees that turns the morning ritual into a small pleasure.',
+    content: [
+      { type: 'text', value: 'The logo is a warm, characterful wordmark in which the final letter "o" doubles as a coffee bean, so the product is part of the name itself.' },
+      { type: 'image', url: '/images/optimized/ziarno-logo.webp', caption: 'The Ziarno wordmark' },
+      { type: 'text', value: 'Caramel, nut, vanilla or cinnamon: every blend should smell the way the palette looks. Spicy orange, golden orange, old lace and dark walnut keep the brand warm and appetising.' },
+      { type: 'image', url: '/images/optimized/ziarno-palette.webp', caption: 'Colour palette' },
+      { type: 'text', value: 'The brand speaks simply, without coffee-shop jargon. A characterful serif carries the headlines and a clean sans-serif handles the copy, setting the tone of the claim: good coffee, no complications.' },
+      { type: 'image', url: '/images/optimized/ziarno-typography.webp', caption: 'Typography hierarchy' },
+      { type: 'text', value: 'On the packaging the identity comes together: the wordmark, a flavour name, a short description and a strength scale. Each flavour gets its own colour from the palette and its own icon built around the coffee bean.' },
+      { type: 'image', url: '/images/optimized/ziarno-packaging.webp', caption: 'Packaging – Leniwy karmel (caramel)' },
+      { type: 'image', url: '/images/optimized/ziarno-packaging-2.webp', caption: 'Packaging – Kremowa wanilia (vanilla)' },
+      { type: 'image', url: '/images/optimized/ziarno-packaging-3.webp', caption: 'Packaging – Orzechowa pauza (hazelnut)' },
+      { type: 'text', value: 'The system also reaches beyond the bags: a can for Zimny karmel, an iced caramel coffee, keeps the same layout and swaps the icon for a snowflake, repeated as a subtle pattern in the background.' },
+      { type: 'image', url: '/images/optimized/ziarno-can.webp', caption: 'Can – Zimny karmel (iced caramel coffee)' }
+    ],
+    note: 'Ziarno is not a real brand – this is a concept project. The ® symbol is used for illustrative purposes only.',
+    pl: {
+      description: 'Identyfikacja wizualna dla Ziarna – polskiej marki smakowych kaw, które zamieniają poranny rytuał w małą przyjemność.',
+      content: [
+        { type: 'text', value: 'Logo to ciepły logotyp z charakterem, w którym ostatnia litera „o” jest jednocześnie ziarnem kawy, więc produkt staje się częścią samej nazwy.' },
+        { type: 'image', url: '/images/optimized/ziarno-logo.webp', caption: 'Logotyp Ziarna' },
+        { type: 'text', value: 'Karmel, orzech, wanilia czy cynamon: każda mieszanka ma pachnieć tak, jak wygląda paleta. Spicy orange, golden orange, old lace i dark walnut sprawiają, że marka jest ciepła i apetyczna.' },
+        { type: 'image', url: '/images/optimized/ziarno-palette.webp', caption: 'Paleta kolorów' },
+        { type: 'text', value: 'Marka mówi prosto, bez kawiarnianego żargonu. Wyrazisty szeryfowy krój prowadzi nagłówki, a czysty bezszeryfowy obsługuje tekst, budując ton hasła: dobra kawa, bez komplikacji.' },
+        { type: 'image', url: '/images/optimized/ziarno-typography.webp', caption: 'Hierarchia typografii' },
+        { type: 'text', value: 'Na opakowaniu identyfikacja łączy się w całość: logotyp, nazwa smaku, krótki opis i skala mocy. Każdy smak dostaje własny kolor z palety i własną ikonę zbudowaną wokół ziarna kawy.' },
+        { type: 'image', url: '/images/optimized/ziarno-packaging.webp', caption: 'Opakowanie – Leniwy karmel' },
+        { type: 'image', url: '/images/optimized/ziarno-packaging-2.webp', caption: 'Opakowanie – Kremowa wanilia' },
+        { type: 'image', url: '/images/optimized/ziarno-packaging-3.webp', caption: 'Opakowanie – Orzechowa pauza' },
+        { type: 'text', value: 'System wychodzi też poza torebki: puszka kawy mrożonej Zimny karmel zachowuje ten sam układ, a ikonę zastępuje płatek śniegu, powtórzony w tle jako delikatny wzór.' },
+        { type: 'image', url: '/images/optimized/ziarno-can.webp', caption: 'Puszka – Zimny karmel' }
+      ],
+      note: 'Ziarno nie jest prawdziwą marką – to projekt koncepcyjny. Symbol ® został użyty wyłącznie poglądowo.'
+    }
+  },
   {
     id: '1984',
     title: '1984',
