@@ -20,6 +20,9 @@ export interface Project {
   imageUrl: string;
   mediaType?: 'image' | 'gif' | 'video';
   posterUrl?: string;
+  // Optional animated image (e.g. animated WebP) used instead of imageUrl on the home gallery. Videos there make
+  // Chrome lower the frame rate when the user is idle, which makes the auto-scroll stutter.
+  galleryThumbUrl?: string;
   description: string;
   content?: ContentBlock[];
   // Optional small print shown at the very end of the project page, e.g. a disclaimer.
@@ -39,6 +42,7 @@ export const projects: Project[] = [
     mediaType: 'video',
     theme: { background: '#EFA00B', text: '#591F0A' },
     posterUrl: '/images/optimized/ziarno-1.webp',
+    galleryThumbUrl: '/images/optimized/ziarno-thumb.webp',
     description: 'Visual identity for Ziarno, a Polish brand of flavoured coffees that turns the morning ritual into a small pleasure.',
     content: [
       { type: 'text', value: 'The logo is a warm, characterful wordmark in which the final letter "o" doubles as a coffee bean, so the product is part of the name itself.' },

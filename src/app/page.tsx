@@ -73,7 +73,7 @@ function ProjectCard({
   project: (typeof projects)[number];
   onOpen: (project: (typeof projects)[number]) => void;
 }) {
-  const { id, title, year, imageUrl, mediaType, posterUrl } = project;
+  const { id, title, year, imageUrl, mediaType, posterUrl, galleryThumbUrl } = project;
 
   return (
     <Link
@@ -94,9 +94,9 @@ function ProjectCard({
       <article>
         <div className="overflow-hidden">
           <ProjectMedia
-            src={imageUrl}
+            src={galleryThumbUrl ?? imageUrl}
             alt={title}
-            mediaType={mediaType}
+            mediaType={galleryThumbUrl ? 'gif' : mediaType}
             posterUrl={posterUrl}
             sizes="(min-width: 1280px) 20vw, (min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
             // Highlighted via data-hovered (set by GalleryCursorLabel) rather than :hover, which browsers don't
