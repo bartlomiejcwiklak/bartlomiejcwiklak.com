@@ -2,24 +2,13 @@
 
 import { usePathname } from 'next/navigation';
 import type { CSSProperties } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { useLanguage } from '@/components/i18n/language';
 import { useIsFooterVisible } from '@/components/layout/use-footer-visibility';
 import { CLOSE_MENU_EVENT, MENU_STATE_EVENT } from '@/components/navigation/menu-items';
 import { PageTransitionLink } from '@/components/navigation/page-transition';
 
 const themeVariables = ['--color-ash', '--color-ink'] as const;
-
-function maskStyle(url: string): CSSProperties {
-  return {
-    maskImage: `url(${url})`,
-    maskSize: 'contain',
-    maskRepeat: 'no-repeat',
-    WebkitMaskImage: `url(${url})`,
-    WebkitMaskSize: 'contain',
-    WebkitMaskRepeat: 'no-repeat'
-  };
-}
 
 // The logo sits outside the page's <main>, which is where a page sets its theme colours, so copy them over.
 function usePageThemeStyle() {
@@ -54,6 +43,8 @@ export function FixedLogo() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isHidden = isFooterVisible && !isMenuOpen;
   const themeStyle = usePageThemeStyle();
+  // useId output contains colons, which are awkward inside url(#...) references.
+  const maskId = `logo-mask${useId().replace(/:/g, '')}`;
 
   useEffect(() => {
     const handleMenuState = (event: Event) => setIsMenuOpen((event as CustomEvent<{ isOpen: boolean }>).detail.isOpen);
@@ -72,11 +63,20 @@ export function FixedLogo() {
       }`}
     >
       <PageTransitionLink href="/" className="project-entry flex items-center" ariaLabel={t('backToPortfolio')}>
-        <span role="img" aria-label="Bartłomiej Ćwiklak logo" className="relative block aspect-[480/321] h-10 md:h-12" style={themeStyle}>
-          {/* Outline in the page background colour, fill in the page text colour; both fade to a new page's theme. */}
-          <span className="absolute inset-0 bg-ink transition-colors duration-500 ease-out" style={maskStyle('/images/logo-stroked-outline-mask.png')} />
-          <span className="absolute inset-0 bg-ash transition-colors duration-500 ease-out" style={maskStyle('/images/logo-stroked-fill-mask.png')} />
-        </span>
+        {/* Outline in the page background colour, fill in the page text colour; both fade to a new page's theme.
+            Drawn as SVG masks: with two stacked CSS mask-image layers, iOS Safari dropped the fill layer. */}
+        <svg role="img" aria-label="Bartłomiej Ćwiklak logo" viewBox="0 0 480 321" className="block aspect-[480/321] h-10 md:h-12" style={themeStyle}>
+          <defs>
+            <mask id={`${maskId}-outline`} maskUnits="userSpaceOnUse" x="0" y="0" width="480" height="321">
+              <image href="/images/logo-stroked-outline-mask.png" width="480" height="321" />
+            </mask>
+            <mask id={`${maskId}-fill`} maskUnits="userSpaceOnUse" x="0" y="0" width="480" height="321">
+              <image href="/images/logo-stroked-fill-mask.png" width="480" height="321" />
+            </mask>
+          </defs>
+          <rect width="480" height="321" mask={`url(#${maskId}-outline)`} className="fill-ink transition-colors duration-500 ease-out" />
+          <rect width="480" height="321" mask={`url(#${maskId}-fill)`} className="fill-ash transition-colors duration-500 ease-out" />
+        </svg>
       </PageTransitionLink>
     </div>
   );
