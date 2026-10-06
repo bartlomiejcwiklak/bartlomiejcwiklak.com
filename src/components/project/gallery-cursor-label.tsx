@@ -28,9 +28,26 @@ export function GalleryCursorLabel({ containerRef }: { containerRef: RefObject<H
     let isInside = false;
     let frame: number | null = null;
     let currentId: string | null = null;
+    let currentCard: HTMLElement | null = null;
+
+    // Marks the card under the cursor for the hover styling. CSS :hover can't be used: browsers don't
+    // re-evaluate it while the gallery moves under a still cursor, so it sticks to cards that scrolled away.
+    const setHoveredCard = (card: HTMLElement | null) => {
+      if (card === currentCard) {
+        return;
+      }
+
+      if (currentCard) {
+        delete currentCard.dataset.hovered;
+      }
+
+      card?.setAttribute('data-hovered', 'true');
+      currentCard = card;
+    };
 
     const hide = () => {
       currentId = null;
+      setHoveredCard(null);
       label.dataset.visible = 'false';
     };
 
@@ -46,6 +63,8 @@ export function GalleryCursorLabel({ containerRef }: { containerRef: RefObject<H
       if (!card || !container.contains(card)) {
         hide();
       } else {
+        setHoveredCard(card);
+
         if (card.dataset.projectId !== currentId) {
           currentId = card.dataset.projectId ?? null;
           titleRef.current!.textContent = card.dataset.projectTitle ?? '';
@@ -90,6 +109,8 @@ export function GalleryCursorLabel({ containerRef }: { containerRef: RefObject<H
       if (frame !== null) {
         window.cancelAnimationFrame(frame);
       }
+
+      setHoveredCard(null);
     };
   }, [containerRef]);
 

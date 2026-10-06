@@ -99,7 +99,9 @@ function ProjectCard({
             mediaType={mediaType}
             posterUrl={posterUrl}
             sizes="(min-width: 1280px) 20vw, (min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
-            className="aspect-square w-full object-cover brightness-90 transition duration-500 group-hover:scale-[1.02] group-hover:brightness-100"
+            // Highlighted via data-hovered (set by GalleryCursorLabel) rather than :hover, which browsers don't
+            // update while the gallery moves under a still cursor.
+            className="aspect-square w-full object-cover brightness-90 transition duration-500 group-data-[hovered=true]:scale-[1.02] group-data-[hovered=true]:brightness-100"
             priority={id === projects[0]?.id}
           />
 
